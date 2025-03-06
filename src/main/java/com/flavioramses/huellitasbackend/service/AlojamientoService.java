@@ -1,5 +1,6 @@
 package com.flavioramses.huellitasbackend.service;
 
+import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Categoria;
@@ -22,32 +23,36 @@ public class AlojamientoService {
     public AlojamientoRepository alojamientoRepository;
 
     public Alojamiento saveAlojamiento(Alojamiento alojamiento) {
-        List<Categoria> categoriasExistentes = new ArrayList<>();
-        for (Categoria categoria : alojamiento.getCategorias()) {
-            Optional<Categoria> categoriaOptional = categoriaRepository.findById(categoria.getId());
-            categoriaOptional.ifPresent(categoriasExistentes::add);
+        Optional<Categoria> categoriaOptional = categoriaRepository.findById(alojamiento.getCategoria().getId());
+        if (categoriaOptional.isPresent()) {
+            alojamiento.setCategoria(categoriaOptional.get());
+            return alojamientoRepository.save(alojamiento);
         }
-        alojamiento.setCategorias(categoriasExistentes);
-        return alojamientoRepository.save(alojamiento);
+        return null;
     }
 
     public List<Alojamiento> getAllAlojamientos() {
         return alojamientoRepository.findAll();
     }
 
-    public Alojamiento updateAlojamiento(Long id, Alojamiento alojamientoNuevo) {
-        Alojamiento alojamiento = alojamientoRepository.findById(id).orElse(null);
+    public Alojamiento updateAlojamiento(Long id, Alojamiento alojamientoNuevo) throws ResourceNotFoundException {
+        Alojamiento alojamiento = alojamientoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado con ID: " + id));
 
-        if(alojamiento == null || alojamientoNuevo == null) return null;
-
-        alojamiento.setId(id);
+        if (alojamientoNuevo == null) {
+            throw new IllegalArgumentException("El alojamiento nuevo no puede ser nulo.");
+        }
         alojamiento.setNombre(alojamientoNuevo.getNombre());
         alojamiento.setDescripcion(alojamientoNuevo.getDescripcion());
-        alojamiento.setCategorias(alojamientoNuevo.getCategorias());
         alojamiento.setPrecio(alojamientoNuevo.getPrecio());
 
-        return alojamientoRepository.save(alojamiento);
+        if (alojamientoNuevo.getCategoria() != null && alojamientoNuevo.getCategoria().getId() != null) {
+            Categoria categoria = categoriaRepository.findById(alojamientoNuevo.getCategoria().getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + alojamientoNuevo.getCategoria().getId()));
+            alojamiento.setCategoria(categoria);
+        }
 
+        return alojamientoRepository.save(alojamiento);
     }
 
     public Optional<Alojamiento> getAlojamientoById (Long id) {

@@ -22,11 +22,10 @@ public class AlojamientoController {
     @PostMapping
     public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody Alojamiento alojamiento) throws BadRequestException {
         Alojamiento alojamientoGuardado = alojamientoService.saveAlojamiento(alojamiento);
-        Optional<Alojamiento> alojamientoById = alojamientoService.getAlojamientoById(alojamiento.getId());
-        if(alojamientoById.isPresent()){
+        if (alojamientoGuardado != null) {
             return ResponseEntity.ok(alojamientoGuardado);
         } else {
-            throw new BadRequestException("Hubo un error al registrar el alojamiento");
+            throw new BadRequestException("Hubo un error al registrar el alojamiento o la categoría no existe.");
         }
     }
 
