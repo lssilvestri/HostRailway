@@ -12,16 +12,15 @@ public class AlojamientoDashboardDTO {
     private String categoriaNombre;
     private String imagenUrl;
 
-    public AlojamientoDashboardDTO(Alojamiento alojamiento) {
-        this.id = alojamiento.getId();
-        this.nombre = alojamiento.getNombre();
-        this.descripcion = alojamiento.getDescripcion();
-        this.precio = alojamiento.getPrecio();
-        this.categoriaNombre = alojamiento.getCategoria().getNombre();
-        this.imagenUrl = alojamiento.getImagenUrl();
-    }
 
     public static AlojamientoDashboardDTO toAlojamientoDashboardDTO(Alojamiento alojamiento) {
-        return new AlojamientoDashboardDTO(alojamiento);
+        AlojamientoDashboardDTO dto = new AlojamientoDashboardDTO();
+        dto.setId(alojamiento.getId());
+        dto.setNombre(alojamiento.getNombre());
+        dto.setDescripcion(alojamiento.getDescripcion());
+        dto.setPrecio(alojamiento.getPrecio());
+        dto.setCategoriaNombre(alojamiento.getCategoria().getNombre());
+        dto.setImagenUrl(alojamiento.getImagenUrl());
+        return dto;
     }
 }

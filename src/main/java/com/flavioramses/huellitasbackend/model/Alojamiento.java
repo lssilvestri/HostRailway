@@ -26,8 +26,8 @@ public class Alojamiento {
     private String descripcion;
     private Double precio;
 
-    @ManyToOne // Cambiado a ManyToOne
-    @JoinColumn(name = "categoria_id") // Especifica la columna de clave foránea
+    @ManyToOne
+    @JoinColumn(name = "categoria_id")
     private Categoria categoria;
 
     @Column(name = "url_imagen")
