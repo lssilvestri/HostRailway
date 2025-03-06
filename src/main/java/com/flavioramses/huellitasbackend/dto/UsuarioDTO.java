@@ -1,4 +1,5 @@
 package com.flavioramses.huellitasbackend.dto;
+import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,13 +15,15 @@ public class UsuarioDTO {
     private String nombre;
     private String apellido;
     private String email;
+    private RolUsuario rol;
 
     public static UsuarioDTO toUsuarioDTO(Usuario usuario) {
         return new UsuarioDTO(
                 usuario.getId(),
                 usuario.getNombre(),
                 usuario.getApellido(),
-                usuario.getEmail()
+                usuario.getEmail(),
+                usuario.getRol()
         );
     }
 
