@@ -40,12 +40,13 @@ public class UsuarioController {
         return UsuarioDTO.toUsuarioDTO(usuario.get());
     }
 
-    @GetMapping("/rol")
-    public ResponseEntity<RolUsuario> getUsuarioRol(@AuthenticationPrincipal UserDetails userDetails) {
-        Usuario usuario = usuarioService.getUsuarioByEmail(userDetails.getUsername());
-        return ResponseEntity.ok(usuario.getRol());
+    @GetMapping("/rol/{id}")
+    public ResponseEntity<RolUsuario> getUsuarioRol(@PathVariable Long id) throws ResourceNotFoundException{
+        Optional<Usuario> usuario = usuarioService.getUsuarioById(id);
+        if(usuario.isEmpty()) throw new ResourceNotFoundException("Usuario con id "+id+" no encontrado");
+        return ResponseEntity.ok(usuario.get().getRol());
     }
-    
+
 
     @PostMapping
     public ResponseEntity<UsuarioDTO> saveUsuario(@RequestBody Usuario usuario) throws BadRequestException {
