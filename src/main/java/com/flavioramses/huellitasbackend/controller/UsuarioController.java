@@ -9,6 +9,8 @@ import com.flavioramses.huellitasbackend.security.SecurityConfig;
 import com.flavioramses.huellitasbackend.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import com.flavioramses.huellitasbackend.model.Usuario;
 
@@ -58,19 +60,21 @@ public class UsuarioController {
 
     @GetMapping("/rol/{role}")
     public ResponseEntity<List<UsuarioDTO>> getUsuariosByRole(@PathVariable RolUsuario role) {
+        if (role != RolUsuario.ADMIN && role != RolUsuario.USER) {
+            throw new RuntimeException("Rol no válido");
+        }
         List<UsuarioDTO> usuarioDTOs = UsuarioDTO.toUserDTOList(usuarioService.getUsersByRole(role));
         return ResponseEntity.ok(usuarioDTOs);
     }
 
     @PutMapping("/{usuarioId}/rol/{role}")
-    public ResponseEntity<String> assignRole(@PathVariable Long usuarioId, @PathVariable RolUsuario role) {
-        usuarioService.assignRole(usuarioId, role);
+    public ResponseEntity<String> assignRole(
+            @PathVariable Long usuarioId,
+            @PathVariable RolUsuario role,
+            @AuthenticationPrincipal UserDetails adminUser) {
+
+        usuarioService.assignRole(usuarioId, role, adminUser.getUsername());
         return ResponseEntity.ok("Rol actualizado correctamente.");
     }
 
-    @PutMapping("/{usuarioId}/revocar-admin")
-    public ResponseEntity<String> removeAdminRole(@PathVariable Long usuarioId) {
-        usuarioService.removeAdminRole(usuarioId);
-        return ResponseEntity.ok("Permiso de administrador revocado correctamente.");
-    }
 }
