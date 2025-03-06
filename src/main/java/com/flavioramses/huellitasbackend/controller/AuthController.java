@@ -48,7 +48,6 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@RequestBody UsuarioLoginDTO loginRequest) {
-        System.out.println("Intento de login");
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -60,10 +59,8 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.generateToken(authentication);
 
-            // Obtener el usuario autenticado
             Usuario usuario = usuarioService.getUsuarioByEmail(loginRequest.getEmail());
 
-            // Construir la respuesta con el JWT y los datos del usuario
             Map<String, Object> response = new HashMap<>();
             response.put("jwt", jwt);
             response.put("usuario", UsuarioDTO.toUsuarioDTO(usuario));
