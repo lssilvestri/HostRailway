@@ -70,10 +70,17 @@ public class UsuarioController {
     @PutMapping("/{usuarioId}/rol/{role}")
     public ResponseEntity<String> assignRole(
             @PathVariable Long usuarioId,
-            @PathVariable RolUsuario role,
+            @PathVariable String role,
             @AuthenticationPrincipal UserDetails adminUser) {
 
-        usuarioService.assignRole(usuarioId, role, adminUser.getUsername());
+        RolUsuario rolUsuario;
+        try {
+            rolUsuario = RolUsuario.valueOf(role.toUpperCase()); // Convierte a RolUsuario
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Rol no válido: " + role);
+        }
+
+        usuarioService.assignRole(usuarioId, rolUsuario, adminUser.getUsername());
         return ResponseEntity.ok("Rol actualizado correctamente.");
     }
 
