@@ -40,6 +40,13 @@ public class UsuarioController {
         return UsuarioDTO.toUsuarioDTO(usuario.get());
     }
 
+    @GetMapping("/rol")
+    public ResponseEntity<RolUsuario> getUsuarioRol(@AuthenticationPrincipal UserDetails userDetails) {
+        Usuario usuario = usuarioService.getUsuarioByEmail(userDetails.getUsername());
+        return ResponseEntity.ok(usuario.getRol());
+    }
+    
+
     @PostMapping
     public ResponseEntity<UsuarioDTO> saveUsuario(@RequestBody Usuario usuario) throws BadRequestException {
         String contrasenaEncriptada = new SecurityConfig().passwordEncoder().encode(usuario.getContrasena());
