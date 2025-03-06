@@ -60,8 +60,13 @@ public class AuthController {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             String jwt = jwtTokenProvider.generateToken(authentication);
 
-            Map<String, String> response = new HashMap<>();
+            // Obtener el usuario autenticado
+            Usuario usuario = usuarioService.getUsuarioByEmail(loginRequest.getEmail());
+
+            // Construir la respuesta con el JWT y los datos del usuario
+            Map<String, Object> response = new HashMap<>();
             response.put("jwt", jwt);
+            response.put("usuario", UsuarioDTO.toUsuarioDTO(usuario));
 
             return ResponseEntity.ok(response);
 

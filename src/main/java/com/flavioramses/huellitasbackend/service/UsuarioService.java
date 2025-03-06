@@ -48,6 +48,11 @@ public class UsuarioService implements UserDetailsService {
         usuarioRepository.deleteById(id);
     }
 
+    public Usuario getUsuarioByEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario con email " + email + " no encontrado"));
+    }
+
 
     public void assignRole(Long usuarioId, RolUsuario newRole) {
         Usuario usuario = usuarioRepository.findById(usuarioId)
