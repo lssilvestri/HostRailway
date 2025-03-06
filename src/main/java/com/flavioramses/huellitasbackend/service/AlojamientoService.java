@@ -2,10 +2,13 @@ package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
+import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.repository.AlojamientoRepository;
+import com.flavioramses.huellitasbackend.repository.CategoriaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,9 +16,18 @@ import java.util.Optional;
 public class AlojamientoService {
 
     @Autowired
+    public CategoriaRepository categoriaRepository;
+
+    @Autowired
     public AlojamientoRepository alojamientoRepository;
 
     public Alojamiento saveAlojamiento(Alojamiento alojamiento) {
+        List<Categoria> categoriasExistentes = new ArrayList<>();
+        for (Categoria categoria : alojamiento.getCategorias()) {
+            Optional<Categoria> categoriaOptional = categoriaRepository.findById(categoria.getId());
+            categoriaOptional.ifPresent(categoriasExistentes::add);
+        }
+        alojamiento.setCategorias(categoriasExistentes);
         return alojamientoRepository.save(alojamiento);
     }
 
