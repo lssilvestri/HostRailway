@@ -55,20 +55,12 @@ public class UsuarioService implements UserDetailsService {
 
 
     public void assignRole(Long usuarioId, RolUsuario newRole, String adminEmail) {
-        Usuario admin = usuarioRepository.findByEmail(adminEmail)
-                .orElseThrow(() -> new RuntimeException("Administrador no encontrado"));
-
-        if (admin.getRol() != RolUsuario.ADMIN) {
-            throw new RuntimeException("No tienes permisos para cambiar roles");
-        }
-
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         usuario.setRol(newRole);
         usuarioRepository.save(usuario);
     }
-
 
 
     public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) {

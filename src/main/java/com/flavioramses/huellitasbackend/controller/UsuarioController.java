@@ -70,8 +70,7 @@ public class UsuarioController {
     @PutMapping("/{usuarioId}/rol/{role}")
     public ResponseEntity<String> assignRole(
             @PathVariable Long usuarioId,
-            @PathVariable String role,
-            @AuthenticationPrincipal UserDetails adminUser) {
+            @PathVariable String role) { // Eliminado @AuthenticationPrincipal
 
         RolUsuario rolUsuario;
         try {
@@ -80,7 +79,7 @@ public class UsuarioController {
             return ResponseEntity.badRequest().body("Rol no válido: " + role);
         }
 
-        usuarioService.assignRole(usuarioId, rolUsuario, adminUser.getUsername());
+        usuarioService.assignRole(usuarioId, rolUsuario, "email"); // Se envia un email placeholder
         return ResponseEntity.ok("Rol actualizado correctamente.");
     }
 
