@@ -2,6 +2,7 @@ package com.flavioramses.huellitasbackend.controller;
 
 import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.AlojamientoDashboardDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.service.AlojamientoService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,6 +33,12 @@ public class AlojamientoController {
     @GetMapping
     public ResponseEntity<List<Alojamiento>> getAllAlojamientos() {
         return ResponseEntity.status(200).body(alojamientoService.getAllAlojamientos());
+    }
+
+    @GetMapping("/dashboard")
+    public ResponseEntity<List<AlojamientoDashboardDTO>> getAllAlojamientosForDashboard() {
+        List<AlojamientoDashboardDTO> alojamientos = alojamientoService.getAllAlojamientosForDashboard();
+        return ResponseEntity.ok(alojamientos);
     }
 
     @GetMapping("/{id}")

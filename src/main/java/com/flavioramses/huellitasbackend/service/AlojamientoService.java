@@ -1,6 +1,7 @@
 package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.AlojamientoDashboardDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Categoria;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class AlojamientoService {
@@ -33,6 +35,13 @@ public class AlojamientoService {
 
     public List<Alojamiento> getAllAlojamientos() {
         return alojamientoRepository.findAll();
+    }
+
+    public List<AlojamientoDashboardDTO> getAllAlojamientosForDashboard() {
+        List<Alojamiento> alojamientos = alojamientoRepository.findAll();
+        return alojamientos.stream()
+                .map(AlojamientoDashboardDTO::toAlojamientoDashboardDTO)
+                .collect(Collectors.toList());
     }
 
     public Alojamiento updateAlojamiento(Long id, Alojamiento alojamientoNuevo) throws ResourceNotFoundException {
