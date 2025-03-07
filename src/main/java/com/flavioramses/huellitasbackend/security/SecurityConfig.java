@@ -25,7 +25,7 @@ public class SecurityConfig {
                         .requestMatchers("/usuarios/rol/**").permitAll()
                         .requestMatchers("/usuarios/{id}").permitAll()
                         .requestMatchers("/usuarios/roles/**").permitAll()
-                        .requestMatchers("/alojamiento/**").permitAll()
+                        .requestMatchers("/alojamientos/**").permitAll()
                         .requestMatchers("/categorias/**").permitAll()
                         .requestMatchers("/usuarios/").permitAll()
                         .requestMatchers("/usuarios/rol/").permitAll()
