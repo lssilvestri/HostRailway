@@ -59,20 +59,13 @@ public class UsuarioController {
         return ResponseEntity.ok(UsuarioDTO.toUserDTOList(usuarioService.getUsersByRole(role)));
     }
 
-    @PutMapping("/{usuarioId}/rol/{role}")
-    public ResponseEntity<String> assignRole(
-            @PathVariable Long usuarioId,
-            @PathVariable String role,
-            @AuthenticationPrincipal UserDetails adminUser) throws ResourceNotFoundException, BadRequestException {
 
-        RolUsuario rolUsuario;
-        try {
-            rolUsuario = RolUsuario.valueOf(role.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Rol no válido: " + role);
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<UsuarioDTO> updateUsuario(
+            @PathVariable Long id,
+            @RequestBody UsuarioDTO usuarioDTO) throws ResourceNotFoundException {
 
-        usuarioService.assignRole(usuarioId, rolUsuario, adminUser.getUsername());
-        return ResponseEntity.ok("Rol actualizado correctamente.");
+        Usuario usuarioActualizado = usuarioService.updateUsuario(id, usuarioDTO);
+        return ResponseEntity.ok(UsuarioDTO.toUsuarioDTO(usuarioActualizado));
     }
 }

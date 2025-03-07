@@ -2,6 +2,7 @@ package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.Exception.EmailAlreadyExistsException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
+import com.flavioramses.huellitasbackend.dto.UsuarioDTO;
 import com.flavioramses.huellitasbackend.dto.UsuarioRegistroDTO;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.model.Usuario;
@@ -60,22 +61,7 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario con email " + email + " no encontrado"));
     }
-
-    @Transactional
-    public void assignRole(Long usuarioId, RolUsuario newRole, String adminEmail) throws ResourceNotFoundException {
-        Usuario admin = usuarioRepository.findByEmail(adminEmail)
-                .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado"));
-
-        if (admin.getRol() != RolUsuario.ADMIN) {
-            throw new RuntimeException("No tienes permisos para cambiar roles");
-        }
-
-        Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
-
-        usuario.setRol(newRole);
-        usuarioRepository.save(usuario);
-    }
+    
 
     @Transactional
     public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) throws EmailAlreadyExistsException {
@@ -90,6 +76,19 @@ public class UsuarioService implements UserDetailsService {
 
         usuario.setContrasena(passwordEncoder.encode(registroDTO.getContrasena()));
         usuario.setRol(RolUsuario.USER);
+
+        return usuarioRepository.save(usuario);
+    }
+
+    @Transactional
+    public Usuario updateUsuario(Long id, UsuarioDTO usuarioDTO) throws ResourceNotFoundException {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con id " + id + " no encontrado"));
+
+        usuario.setNombre(usuarioDTO.getNombre());
+        usuario.setApellido(usuarioDTO.getApellido());
+        usuario.setEmail(usuarioDTO.getEmail());
+        usuario.setRol(RolUsuario.valueOf(String.valueOf(usuarioDTO.getRol()))); // Convierte el String del rol a RolUsuario
 
         return usuarioRepository.save(usuario);
     }
