@@ -1,6 +1,5 @@
 package com.flavioramses.huellitasbackend.security;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,25 +17,32 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/**").permitAll()
-                        .anyRequest().authenticated() // Secure all other endpoints
+                        .requestMatchers("/api/auth/**").permitAll() // Permitir acceso a la autenticación
+                        .requestMatchers("/usuarios/rol/**").permitAll()
+                        .requestMatchers("/usuarios/{id}").permitAll()
+                        .requestMatchers("/usuarios/roles/**").permitAll()
+                        .requestMatchers("/alojamiento/**").permitAll()
+                        .requestMatchers("/usuarios/").permitAll()
+                        .requestMatchers("/usuarios/rol/").permitAll()
+                        .requestMatchers("/usuarios/{usuarioId}/rol/{role}").hasRole("ADMIN")
+                        .requestMatchers("/administracion/**").hasRole("ADMIN") // Proteger rutas de administración
+                        .anyRequest().authenticated()
                 )
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Make it stateless (important for JWT)
-                .formLogin(form -> form.disable()) // Disable form login
-                .httpBasic(basic -> basic.disable()) // Disable HTTP Basic Auth
-                .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class); // Ensure the JWT filter runs before Spring's authentication filter
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .formLogin(form -> form.disable())
+                .httpBasic(basic -> basic.disable())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
 
     @Bean
-    public JwtAuthenticationFilter jwtAuthenticationFilter() {
-        // Spring will inject the JwtTokenProvider here
-        return new JwtAuthenticationFilter(jwtTokenProvider());
+    public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        return new JwtAuthenticationFilter(jwtTokenProvider);
     }
 
     @Bean
@@ -53,5 +59,4 @@ public class SecurityConfig {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }

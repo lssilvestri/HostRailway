@@ -1,71 +1,86 @@
 package com.flavioramses.huellitasbackend.service;
 
+import com.flavioramses.huellitasbackend.Exception.EmailAlreadyExistsException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.UsuarioRegistroDTO;
 import com.flavioramses.huellitasbackend.model.RolUsuario;
 import com.flavioramses.huellitasbackend.model.Usuario;
 import com.flavioramses.huellitasbackend.repository.UsuarioRepository;
-import com.flavioramses.huellitasbackend.security.SecurityConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService implements UserDetailsService {
 
-
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder = new SecurityConfig().passwordEncoder();
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioService(UsuarioRepository usuarioRepository) {
+    @Autowired
+    public UsuarioService(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public List<Usuario> getAllUsuarios() {
         return usuarioRepository.findAll();
     }
 
-    public Optional<Usuario> getUsuarioById (Long id) {
+    public Optional<Usuario> getUsuarioById(Long id) {
         return usuarioRepository.findById(id);
     }
 
     public Usuario saveUsuario(Usuario usuario) {
+        usuario.setContrasena(passwordEncoder.encode(usuario.getContrasena()));
         return usuarioRepository.save(usuario);
     }
-
 
     public List<Usuario> getUsersByRole(RolUsuario role) {
         return usuarioRepository.findByRol(role);
     }
 
+    @Transactional
     public void deleteUsuarioById(Long id) {
         usuarioRepository.deleteById(id);
     }
 
-    public Usuario getUsuarioByEmail(String email) {
+    public Usuario getUsuarioByEmail(String email) throws ResourceNotFoundException {
         return usuarioRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Usuario con email " + email + " no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario con email " + email + " no encontrado"));
     }
 
+    @Transactional
+    public void assignRole(Long usuarioId, RolUsuario newRole, String adminEmail) throws ResourceNotFoundException {
+        Usuario admin = usuarioRepository.findByEmail(adminEmail)
+                .orElseThrow(() -> new ResourceNotFoundException("Administrador no encontrado"));
 
-    public void assignRole(Long usuarioId, RolUsuario newRole, String adminEmail) {
+        if (admin.getRol() != RolUsuario.ADMIN) {
+            throw new RuntimeException("No tienes permisos para cambiar roles");
+        }
+
         Usuario usuario = usuarioRepository.findById(usuarioId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Usuario no encontrado"));
 
         usuario.setRol(newRole);
         usuarioRepository.save(usuario);
     }
 
-
-    public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) {
+    @Transactional
+    public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) throws EmailAlreadyExistsException {
         if (usuarioRepository.findByEmail(registroDTO.getEmail()).isPresent()) {
-            throw new RuntimeException("Email ya registrado");
+            throw new EmailAlreadyExistsException("Email ya registrado");
         }
 
         Usuario usuario = new Usuario();
@@ -84,10 +99,14 @@ public class UsuarioService implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario con email: " + email + " no encontrado"));
 
-        return new org.springframework.security.core.userdetails.User(
+        return new User(
                 usuario.getEmail(),
                 usuario.getContrasena(),
-                new ArrayList<>()
+                getAuthorities(usuario.getRol())
         );
+    }
+
+    private List<GrantedAuthority> getAuthorities(RolUsuario rol) {
+        return List.of(new SimpleGrantedAuthority("ROLE_" + rol.name()));
     }
 }
