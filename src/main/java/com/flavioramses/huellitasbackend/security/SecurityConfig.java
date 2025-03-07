@@ -26,10 +26,11 @@ public class SecurityConfig {
                         .requestMatchers("/usuarios/{id}").permitAll()
                         .requestMatchers("/usuarios/roles/**").permitAll()
                         .requestMatchers("/alojamiento/**").permitAll()
+                        .requestMatchers("/categorias/**").permitAll()
                         .requestMatchers("/usuarios/").permitAll()
                         .requestMatchers("/usuarios/rol/").permitAll()
                         .requestMatchers("/usuarios/{usuarioId}/rol/{role}").hasRole("ADMIN")
-                        .requestMatchers("/administracion/**").hasRole("ADMIN") // Proteger rutas de administración
+                        .requestMatchers("/administracion/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
