@@ -1,4 +1,5 @@
 package com.flavioramses.huellitasbackend.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,5 +24,6 @@ public class ImagenAlojamiento {
 
     @ManyToOne
     @JoinColumn(name = "alojamiento_id")
+    @JsonBackReference
     private Alojamiento alojamiento;
 }
