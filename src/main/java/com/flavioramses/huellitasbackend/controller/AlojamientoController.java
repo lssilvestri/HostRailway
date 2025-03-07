@@ -7,9 +7,8 @@ import com.flavioramses.huellitasbackend.dto.AlojamientoDTO;
 import com.flavioramses.huellitasbackend.model.Alojamiento;
 import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.service.AlojamientoService;
-import com.flavioramses.huellitasbackend.service.CategoriaService; // Agrega CategoriaService
+import com.flavioramses.huellitasbackend.service.CategoriaService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +23,7 @@ public class AlojamientoController {
     public AlojamientoService alojamientoService;
 
     @Autowired
-    public CategoriaService categoriaService; // Agrega CategoriaService
+    public CategoriaService categoriaService;
 
     @PostMapping
     public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException, BadRequestException {

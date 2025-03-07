@@ -1,7 +1,11 @@
 package com.flavioramses.huellitasbackend.dto;
 
 import com.flavioramses.huellitasbackend.model.Alojamiento;
+import com.flavioramses.huellitasbackend.model.ImagenAlojamiento;
 import lombok.Data;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class AlojamientoDashboardDTO {
@@ -10,8 +14,7 @@ public class AlojamientoDashboardDTO {
     private String descripcion;
     private Double precio;
     private String categoriaNombre;
-    private String imagenUrl;
-
+    private List<String> imagenesUrl; // Cambiado a una lista de URLs
 
     public static AlojamientoDashboardDTO toAlojamientoDashboardDTO(Alojamiento alojamiento) {
         AlojamientoDashboardDTO dto = new AlojamientoDashboardDTO();
@@ -20,7 +23,9 @@ public class AlojamientoDashboardDTO {
         dto.setDescripcion(alojamiento.getDescripcion());
         dto.setPrecio(alojamiento.getPrecio());
         dto.setCategoriaNombre(alojamiento.getCategoria().getNombre());
-        dto.setImagenUrl(alojamiento.getImagenUrl());
+        dto.setImagenesUrl(alojamiento.getImagenes().stream()
+                .map(ImagenAlojamiento::getUrlImagen)
+                .collect(Collectors.toList()));
         return dto;
     }
 }

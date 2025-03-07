@@ -61,7 +61,7 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario con email " + email + " no encontrado"));
     }
-    
+
 
     @Transactional
     public Usuario registrarUsuario(UsuarioRegistroDTO registroDTO) throws EmailAlreadyExistsException {
