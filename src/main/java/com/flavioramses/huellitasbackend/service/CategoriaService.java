@@ -28,17 +28,16 @@ public class CategoriaService {
 
     @Transactional
     public Categoria updateCategoria(Long id, Categoria categoriaNueva) throws ResourceNotFoundException {
-        Categoria categoria = categoriaRepository.findById(id)
+        return categoriaRepository.findById(id)
+                .map(categoria -> {
+                    if (categoriaNueva == null) {
+                        throw new IllegalArgumentException("La nueva categoría no puede ser nula.");
+                    }
+                    categoria.setNombre(categoriaNueva.getNombre());
+                    categoria.setDescripcion(categoriaNueva.getDescripcion());
+                    return categoriaRepository.save(categoria);
+                })
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));
-
-        if (categoriaNueva == null) {
-            throw new IllegalArgumentException("La nueva categoría no puede ser nula.");
-        }
-
-        categoria.setNombre(categoriaNueva.getNombre());
-        categoria.setDescripcion(categoriaNueva.getDescripcion());
-
-        return categoriaRepository.save(categoria);
     }
 
     @Transactional

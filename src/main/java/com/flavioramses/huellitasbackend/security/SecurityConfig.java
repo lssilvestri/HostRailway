@@ -2,6 +2,7 @@ package com.flavioramses.huellitasbackend.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,8 @@ public class SecurityConfig {
                         .requestMatchers("/alojamientos/**").permitAll()
                         .requestMatchers("/categorias/**").permitAll()
                         .requestMatchers("/usuarios/**").permitAll()
+                        .requestMatchers(HttpMethod.PUT, "/usuarios/{usuarioId}/rol/{role}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/usuarios").hasRole("ADMIN")
                         .requestMatchers("/administracion/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
