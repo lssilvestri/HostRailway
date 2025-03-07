@@ -22,14 +22,9 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Permitir acceso a la autenticación
-                        .requestMatchers("/usuarios/rol/**").permitAll()
-                        .requestMatchers("/usuarios/{id}").permitAll()
-                        .requestMatchers("/usuarios/roles/**").permitAll()
                         .requestMatchers("/alojamientos/**").permitAll()
                         .requestMatchers("/categorias/**").permitAll()
-                        .requestMatchers("/usuarios/").permitAll()
-                        .requestMatchers("/usuarios/rol/").permitAll()
-                        .requestMatchers("/usuarios/{usuarioId}/rol/{role}").hasRole("ADMIN")
+                        .requestMatchers("/usuarios/**").permitAll()
                         .requestMatchers("/administracion/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
