@@ -5,7 +5,6 @@ RUN mvn clean package -DskipTests
 
 # Stage 2: Create the runtime image
 FROM eclipse-temurin:23-alpine
-#Copy only the needed jar, and rename it to app.jar
-COPY --from=build /app/target/*.jar app.jar
+COPY --from=build /app/target/huellitas-backend-0.0.1-SNAPSHOT.jar app.jar
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "app.jar"]
