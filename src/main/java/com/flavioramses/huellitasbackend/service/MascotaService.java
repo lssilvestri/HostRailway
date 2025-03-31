@@ -16,7 +16,7 @@ import java.util.Optional;
 
 @Service
 public class MascotaService {
-
+    @Autowired
     private final MascotaRepository mascotaRepository;
 
     @Autowired

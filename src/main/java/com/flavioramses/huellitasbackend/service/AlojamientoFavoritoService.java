@@ -20,9 +20,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class AlojamientoFavoritoService {
-
+    @Autowired
     private final AlojamientoFavoritoRepository favoritoRepository;
+    @Autowired
     private final ClienteRepository clienteRepository;
+    @Autowired
     private final AlojamientoRepository alojamientoRepository;
 
     @Autowired

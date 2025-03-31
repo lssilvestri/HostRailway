@@ -12,6 +12,7 @@ import com.flavioramses.huellitasbackend.repository.MascotaRepository;
 import com.flavioramses.huellitasbackend.repository.ReservaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -22,9 +23,13 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class ReservaService {
+    @Autowired
     private final ReservaRepository reservaRepository;
+    @Autowired
     private final ClienteRepository clienteRepository;
+    @Autowired
     private final AlojamientoRepository alojamientoRepository;
+    @Autowired
     private final MascotaRepository mascotaRepository;
 
     public List<ReservaDTO> getAllReservas() {

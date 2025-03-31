@@ -57,7 +57,8 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
 
     @Query("SELECT COUNT(r) > 0 FROM Reserva r WHERE " +
             "r.alojamiento.id = :alojamientoId " +
-            "AND (r.fechaInicio <= :fechaFin AND r.fechaFin >= :fechaInicio)")
+            "AND r.fechaDesde <= :fechaFin " +   // Usa fechaDesde y compara con :fechaFin
+            "AND r.fechaHasta >= :fechaInicio") // Usa fechaHasta y compara con :fechaInicio
     boolean existsByAlojamientoAndFechaEntre(@Param("alojamientoId") Long alojamientoId,
                                              @Param("fechaInicio") LocalDate fechaInicio,
                                              @Param("fechaFin") LocalDate fechaFin);

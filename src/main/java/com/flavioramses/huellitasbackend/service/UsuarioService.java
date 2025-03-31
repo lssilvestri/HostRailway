@@ -27,9 +27,11 @@ import java.util.stream.Collectors;
 
 @Service
 public class UsuarioService implements UserDetailsService {
-
+    @Autowired
     private final UsuarioRepository usuarioRepository;
+    @Autowired
     private final ClienteRepository clienteRepository;
+    @Autowired
     private final PasswordEncoder passwordEncoder;
 
     @Autowired

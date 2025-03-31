@@ -15,10 +15,10 @@ public interface AlojamientoRepository extends JpaRepository<Alojamiento, Long> 
     List<Alojamiento> findByNombreContainingIgnoreCaseAndActivo(String nombre);
 
     @Query("""
-    SELECT a FROM Alojamiento a 
+    SELECT a FROM Alojamiento a
     WHERE a.activo = true AND NOT EXISTS (
-        SELECT 1 FROM Reserva r 
-        WHERE r.alojamiento.id = a.id 
+        SELECT 1 FROM Reserva r
+        WHERE r.alojamiento.id = a.id
         AND ((r.fechaDesde <= :fechaFin AND r.fechaHasta >= :fechaInicio) 
         AND r.estado IN ('PENDIENTE', 'CONFIRMADA'))
     )
