@@ -9,9 +9,7 @@ import java.time.LocalDate;
 public class DisponibilidadBusquedaDTO {
     @NotNull
     private LocalDate fechaInicio;
-
     @NotNull
     private LocalDate fechaFin;
-
     private String nombreAlojamiento;
 }

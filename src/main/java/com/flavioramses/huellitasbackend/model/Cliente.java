@@ -20,6 +20,7 @@ public class Cliente {
     @OneToOne
     @JoinColumn(name = "usuario_id", referencedColumnName = "id", nullable = false)
     private Usuario usuario;
+    @JsonManagedReference
     @JsonIgnore
     @OneToMany(mappedBy = "cliente")
     private List<Reserva> reservas = new ArrayList<>();

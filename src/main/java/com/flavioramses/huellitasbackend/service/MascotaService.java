@@ -2,11 +2,13 @@ package com.flavioramses.huellitasbackend.service;
 
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.Exception.UnauthorizedException;
+import com.flavioramses.huellitasbackend.dto.MascotaDTO;
 import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.repository.ClienteRepository;
 import com.flavioramses.huellitasbackend.repository.MascotaRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,104 +17,66 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 public class MascotaService {
-    @Autowired
+
     private final MascotaRepository mascotaRepository;
+    private final ClienteRepository clienteRepository;
 
-    @Autowired
-    private ClienteRepository clienteRepository;
-
-    @Autowired
-    public MascotaService(MascotaRepository mascotaRepository) {
-        this.mascotaRepository = mascotaRepository;
-    }
-
-    public List<Mascota> getAllMascotas() {
-        return mascotaRepository.findAll();
-    }
-
-    public Optional<Mascota> getMascotaById(Long id) {
-        return mascotaRepository.findById(id);
-    }
-
-    public Mascota updateMascota(Long id, Mascota mascotaNueva) throws UnauthorizedException, ResourceNotFoundException {
-        Mascota mascota = mascotaRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Mascota no encontrada con ID: " + id));
-
-        // Verificar que el cliente tenga permiso para modificar esta mascota
-        if (!mascota.getCliente().getId().equals(mascotaNueva.getCliente().getId())) {
-            throw new UnauthorizedException("No tienes permiso para modificar esta mascota");
-        }
-
-        // Actualizar todos los campos de la mascota
-        mascota.setNombre(mascotaNueva.getNombre());
-        mascota.setEspecie(mascotaNueva.getEspecie());
-        mascota.setRaza(mascotaNueva.getRaza());
-        mascota.setPeso(mascotaNueva.getPeso());
-        mascota.setEdad(mascotaNueva.getEdad());
-        mascota.setObservaciones(mascotaNueva.getObservaciones());
-
-        // No actualizamos el cliente ni el estado activo aquí, ya que son campos especiales
-        // que tienen sus propios métodos específicos
-
-        return mascotaRepository.save(mascota);
-    }
-
-    public Mascota saveMascota(Mascota mascota) throws ResourceNotFoundException {
-        // Verificar si el cliente existe antes de asignarlo
-        Cliente cliente = clienteRepository.findById(mascota.getCliente().getId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado con ID: " + mascota.getCliente().getId()));
-
-        mascota.setCliente(cliente); // Asignar el cliente gestionado por Hibernate
-        return mascotaRepository.save(mascota);
-    }
-
-    public void deleteMascotaById(Long id) {
-        mascotaRepository.deleteById(id);
-    }
-
+    // Obtener todas las mascotas activas de un cliente
     public List<Mascota> getMascotasByClienteId(Long clienteId) {
         return mascotaRepository.findByClienteIdAndActivoTrue(clienteId);
     }
 
-    @Transactional
-    public Mascota desactivarMascota(Long mascotaId, Long clienteId) throws ResourceNotFoundException, UnauthorizedException {
-        Mascota mascota = mascotaRepository.findById(mascotaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Mascota no encontrada con ID: " + mascotaId));
-
-        // Validar que la mascota pertenece al cliente
-        if (!mascota.getCliente().getId().equals(clienteId)) {
-            throw new UnauthorizedException("No tienes permiso para modificar esta mascota");
-        }
-
-        mascota.setActivo(false);
-        return mascotaRepository.save(mascota);
+    // Obtener una mascota por ID y validar que pertenezca al cliente
+    public Mascota getMascotaByIdAndCliente(Long id, Long clienteId) throws ResourceNotFoundException {
+        return mascotaRepository.findByIdAndClienteId(id, clienteId)
+                .orElseThrow(() -> new ResourceNotFoundException("Mascota no encontrada o no pertenece al cliente."));
     }
 
-    @Transactional
-    public Mascota activarMascota(Long mascotaId, Long clienteId) throws ResourceNotFoundException, UnauthorizedException {
-        Mascota mascota = mascotaRepository.findById(mascotaId)
-                .orElseThrow(() -> new ResourceNotFoundException("Mascota no encontrada con ID: " + mascotaId));
+    // Guardar nueva mascota
+    public Mascota saveMascota(MascotaDTO mascotaDTO) throws ResourceNotFoundException {
+        Cliente cliente = clienteRepository.findById(mascotaDTO.getClienteId())
+                .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado."));
 
-        // Validar que la mascota pertenece al cliente
-        if (!mascota.getCliente().getId().equals(clienteId)) {
-            throw new UnauthorizedException("No tienes permiso para modificar esta mascota");
-        }
-
+        Mascota mascota = new Mascota();
+        mascota.setNombre(mascotaDTO.getNombre());
+        mascota.setEspecie(mascotaDTO.getEspecie());
+        mascota.setRaza(mascotaDTO.getRaza());
+        mascota.setPeso(mascotaDTO.getPeso());
+        mascota.setEdad(mascotaDTO.getEdad());
+        mascota.setObservaciones(mascotaDTO.getObservaciones());
         mascota.setActivo(true);
+        mascota.setCliente(cliente);
+
         return mascotaRepository.save(mascota);
     }
 
-    public List<Mascota> buscarMascotasPorNombre(String nombre) {
-        return mascotaRepository.findByNombreContainingIgnoreCaseAndActivoTrue(nombre);
+    // Actualizar una mascota (validando propietario)
+    public Mascota updateMascota(Long id, Long clienteId, MascotaDTO mascotaDTO) throws ResourceNotFoundException {
+        Mascota mascota = getMascotaByIdAndCliente(id, clienteId);
+        mascota.setNombre(mascotaDTO.getNombre());
+        mascota.setEspecie(mascotaDTO.getEspecie());
+        mascota.setRaza(mascotaDTO.getRaza());
+        mascota.setPeso(mascotaDTO.getPeso());
+        mascota.setEdad(mascotaDTO.getEdad());
+        mascota.setObservaciones(mascotaDTO.getObservaciones());
+        return mascotaRepository.save(mascota);
     }
 
-    public List<Mascota> buscarMascotasPorEspecie(String especie) {
-        return mascotaRepository.findByEspecieIgnoreCaseAndActivoTrue(especie);
+    // Eliminar una mascota validando propietario
+    public void deleteMascotaById(Long id, Long clienteId) throws ResourceNotFoundException {
+        Mascota mascota = getMascotaByIdAndCliente(id, clienteId);
+        mascotaRepository.delete(mascota);
     }
 
-    public List<Mascota> buscarMascotasPorRaza(String raza) {
-        return mascotaRepository.findByRazaIgnoreCaseAndActivoTrue(raza);
+    // Cambiar estado de una mascota (activar/desactivar)
+    @Transactional
+    public Mascota cambiarEstadoMascota(Long id, Long clienteId, boolean activo) throws ResourceNotFoundException {
+        Mascota mascota = getMascotaByIdAndCliente(id, clienteId);
+        mascota.setActivo(activo);
+        return mascotaRepository.save(mascota);
     }
 }
+
 

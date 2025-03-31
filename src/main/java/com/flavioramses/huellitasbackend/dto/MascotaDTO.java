@@ -16,7 +16,6 @@ public class MascotaDTO {
     private Long id;
     private String nombre;
     private Long clienteId;
-    private String nombreCliente;
     private String especie;
     private String raza;
     private Double peso;
@@ -24,38 +23,21 @@ public class MascotaDTO {
     private String observaciones;
     private Boolean activo;
 
-    // Método estático para convertir una entidad Mascota a MascotaDTO
     public static MascotaDTO toMascotaDTO(Mascota mascota) {
-        if (mascota == null) {
-            return null;
-        }
-
-        MascotaDTO dto = new MascotaDTO();
-        dto.setId(mascota.getId());
-        dto.setNombre(mascota.getNombre());
-
-        // Asegurar que el cliente no sea nulo antes de obtener su ID y nombre
-        if (mascota.getCliente() != null) {
-            dto.setClienteId(mascota.getCliente().getId());
-            dto.setNombreCliente(mascota.getCliente().getUsuario().getNombre());
-        }
-
-        dto.setEspecie(mascota.getEspecie());
-        dto.setRaza(mascota.getRaza());
-        dto.setPeso(mascota.getPeso());
-        dto.setEdad(mascota.getEdad());
-        dto.setObservaciones(mascota.getObservaciones());
-        dto.setActivo(mascota.isActivo());
-
-        return dto;
+        return new MascotaDTO(
+                mascota.getId(),
+                mascota.getNombre(),
+                mascota.getCliente().getId(),
+                mascota.getEspecie(),
+                mascota.getRaza(),
+                mascota.getPeso(),
+                mascota.getEdad(),
+                mascota.getObservaciones(),
+                mascota.isActivo()
+        );
     }
 
-    // Método estático para convertir una lista de entidades Mascota a una lista de MascotaDTO
     public static List<MascotaDTO> toMascotaDTOList(List<Mascota> mascotas) {
-        if (mascotas == null) {
-            return new ArrayList<>();
-        }
-
         return mascotas.stream()
                 .map(MascotaDTO::toMascotaDTO)
                 .collect(Collectors.toList());

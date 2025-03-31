@@ -1,4 +1,5 @@
 package com.flavioramses.huellitasbackend.model;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
 import jakarta.persistence.*;
@@ -24,6 +25,7 @@ public class Reserva {
     @JoinColumn(name = "alojamiento_id", nullable = false)
     private Alojamiento alojamiento;
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;

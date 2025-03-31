@@ -56,10 +56,7 @@ public class Alojamiento {
         return reservas.stream()
                 .noneMatch(reserva ->
                         (reserva.getEstado() == EstadoReserva.PENDIENTE || reserva.getEstado() == EstadoReserva.CONFIRMADA) &&
-                                (fechaDesde.isBefore(reserva.getFechaHasta()) || fechaDesde.isEqual(reserva.getFechaHasta())) &&
-                                (fechaHasta.isAfter(reserva.getFechaDesde()) || fechaHasta.isEqual(reserva.getFechaDesde()))
+                                !(fechaHasta.isBefore(reserva.getFechaDesde()) || fechaDesde.isAfter(reserva.getFechaHasta()))
                 );
     }
-
-
 }
