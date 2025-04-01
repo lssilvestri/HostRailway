@@ -1,5 +1,7 @@
 package com.flavioramses.huellitasbackend.model;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
 import jakarta.persistence.*;
@@ -17,16 +19,16 @@ public class Reserva {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "mascota_id", nullable = false)
     private Mascota mascota;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "alojamiento_id", nullable = false)
     private Alojamiento alojamiento;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
@@ -43,14 +45,15 @@ public class Reserva {
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private LocalDateTime fechaCreacion = LocalDateTime.now();
 
-    public Reserva(ReservaNuevaDTO dto, Mascota mascota, Alojamiento alojamiento, Cliente cliente, LocalDate fechaDesde, LocalDate fechaHasta, EstadoReserva pendiente, LocalDateTime now) {
+    public Reserva(Long id, Mascota mascota, Alojamiento alojamiento, Cliente cliente, LocalDate fechaDesde, LocalDate fechaHasta, EstadoReserva estado, LocalDateTime fechaCreacion) {
+        this.id = id;
         this.mascota = mascota;
         this.alojamiento = alojamiento;
         this.cliente = cliente;
         this.fechaDesde = fechaDesde;
         this.fechaHasta = fechaHasta;
-        this.estado = EstadoReserva.PENDIENTE;
-        this.fechaCreacion = LocalDateTime.now();
+        this.estado = estado;
+        this.fechaCreacion = fechaCreacion;
     }
 
     public ReservaDTO toReservaDTO() {

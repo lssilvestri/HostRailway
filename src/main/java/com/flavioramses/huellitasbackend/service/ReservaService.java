@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -34,7 +35,11 @@ public class ReservaService {
 
     public List<ReservaDTO> getAllReservas() {
         try {
-            return reservaRepository.findAll().stream()
+            List<Reserva> reservas = reservaRepository.findAll();
+            if (reservas.isEmpty()) {
+                return Collections.emptyList();
+            }
+            return reservas.stream()
                     .map(ReservaDTO::fromEntity)
                     .collect(Collectors.toList());
         } catch (Exception e) {
