@@ -36,18 +36,33 @@ public class ReservaService {
     public List<ReservaDTO> getAllReservas() {
         try {
             List<Reserva> reservas = reservaRepository.findAll();
-            if (reservas.isEmpty()) {
+            if (reservas == null || reservas.isEmpty()) {
                 return Collections.emptyList();
             }
-            // Inicializar las relaciones lazy
-            reservas.forEach(reserva -> {
-                reserva.getMascota().getId();
-                reserva.getAlojamiento().getId();
-                reserva.getCliente().getId();
-                reserva.getCliente().getUsuario().getId();
-            });
+
             return reservas.stream()
-                    .map(ReservaDTO::fromEntity)
+                    .map(reserva -> {
+                        try {
+                            // Inicializar las relaciones lazy de manera segura
+                            if (reserva.getMascota() != null) {
+                                reserva.getMascota().getId();
+                            }
+                            if (reserva.getAlojamiento() != null) {
+                                reserva.getAlojamiento().getId();
+                            }
+                            if (reserva.getCliente() != null) {
+                                reserva.getCliente().getId();
+                                if (reserva.getCliente().getUsuario() != null) {
+                                    reserva.getCliente().getUsuario().getId();
+                                }
+                            }
+                            return ReservaDTO.fromEntity(reserva);
+                        } catch (Exception e) {
+                            // Si hay un error al procesar una reserva, la omitimos
+                            return null;
+                        }
+                    })
+                    .filter(dto -> dto != null)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             throw new RuntimeException("Error al obtener las reservas: " + e.getMessage());

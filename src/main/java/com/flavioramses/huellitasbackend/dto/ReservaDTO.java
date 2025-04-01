@@ -31,35 +31,64 @@ public class ReservaDTO {
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public static ReservaDTO fromEntity(Reserva reserva) {
+        if (reserva == null) {
+            return null;
+        }
+
         ReservaDTO dto = new ReservaDTO();
         dto.setId(reserva.getId());
-        dto.setFechaDesde(Optional.ofNullable(reserva.getFechaDesde())
-                .map(f -> f.format(FORMATTER)).orElse("Fecha no disponible"));
-        dto.setFechaHasta(Optional.ofNullable(reserva.getFechaHasta())
-                .map(f -> f.format(FORMATTER)).orElse("Fecha no disponible"));
-        dto.setMascotaNombre(Optional.ofNullable(reserva.getMascota())
-                .map(Mascota::getNombre).orElse("Desconocida"));
-        dto.setMascotaId(Optional.ofNullable(reserva.getMascota())
-                .map(Mascota::getId).orElse(null));
-        dto.setAlojamientoId(Optional.ofNullable(reserva.getAlojamiento())
-                .map(Alojamiento::getId).orElse(null));
-        dto.setAlojamientoNombre(Optional.ofNullable(reserva.getAlojamiento())
-                .map(Alojamiento::getNombre).orElse("No disponible"));
-        dto.setAlojamientoPrecio(Optional.ofNullable(reserva.getAlojamiento())
-                .map(Alojamiento::getPrecio).orElse(0.0));
-        dto.setClienteNombre(Optional.ofNullable(reserva.getCliente())
-                .map(c -> c.getUsuario().getNombre()).orElse("No disponible"));
-        dto.setClienteApellido(Optional.ofNullable(reserva.getCliente())
-                .map(c -> c.getUsuario().getApellido()).orElse("No disponible"));
-        dto.setClienteEmail(Optional.ofNullable(reserva.getCliente())
-                .map(c -> c.getUsuario().getEmail()).orElse("No disponible"));
+        
+        // Manejar fechas
+        dto.setFechaDesde(reserva.getFechaDesde() != null ? 
+            reserva.getFechaDesde().format(FORMATTER) : "Fecha no disponible");
+        dto.setFechaHasta(reserva.getFechaHasta() != null ? 
+            reserva.getFechaHasta().format(FORMATTER) : "Fecha no disponible");
+        dto.setFechaCreacion(reserva.getFechaCreacion() != null ? 
+            reserva.getFechaCreacion().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : "Fecha no disponible");
+        
+        // Manejar estado
         dto.setEstado(reserva.getEstado());
-        dto.setFechaCreacion(Optional.ofNullable(reserva.getFechaCreacion())
-                .map(f -> f.format(FORMATTER)).orElse("Fecha no disponible"));
+        
+        // Manejar mascota
+        if (reserva.getMascota() != null) {
+            dto.setMascotaId(reserva.getMascota().getId());
+            dto.setMascotaNombre(reserva.getMascota().getNombre());
+        } else {
+            dto.setMascotaId(null);
+            dto.setMascotaNombre("Desconocida");
+        }
+        
+        // Manejar alojamiento
+        if (reserva.getAlojamiento() != null) {
+            dto.setAlojamientoId(reserva.getAlojamiento().getId());
+            dto.setAlojamientoNombre(reserva.getAlojamiento().getNombre());
+            dto.setAlojamientoPrecio(reserva.getAlojamiento().getPrecio());
+        } else {
+            dto.setAlojamientoId(null);
+            dto.setAlojamientoNombre("No disponible");
+            dto.setAlojamientoPrecio(0.0);
+        }
+        
+        // Manejar cliente
+        if (reserva.getCliente() != null && reserva.getCliente().getUsuario() != null) {
+            dto.setClienteNombre(reserva.getCliente().getUsuario().getNombre());
+            dto.setClienteApellido(reserva.getCliente().getUsuario().getApellido());
+            dto.setClienteEmail(reserva.getCliente().getUsuario().getEmail());
+        } else {
+            dto.setClienteNombre("No disponible");
+            dto.setClienteApellido("No disponible");
+            dto.setClienteEmail("No disponible");
+        }
+
         return dto;
     }
 
     public static List<ReservaDTO> toReservaDTOList(List<Reserva> reservas) {
-        return reservas != null ? reservas.stream().map(ReservaDTO::fromEntity).collect(Collectors.toList()) : Collections.emptyList();
+        return reservas != null ? 
+            reservas.stream()
+                .map(ReservaDTO::fromEntity)
+                .filter(dto -> dto != null)
+                .collect(Collectors.toList()) : 
+            Collections.emptyList();
     }
 }
