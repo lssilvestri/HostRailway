@@ -39,6 +39,13 @@ public class ReservaService {
             if (reservas.isEmpty()) {
                 return Collections.emptyList();
             }
+            // Inicializar las relaciones lazy
+            reservas.forEach(reserva -> {
+                reserva.getMascota().getId();
+                reserva.getAlojamiento().getId();
+                reserva.getCliente().getId();
+                reserva.getCliente().getUsuario().getId();
+            });
             return reservas.stream()
                     .map(ReservaDTO::fromEntity)
                     .collect(Collectors.toList());
