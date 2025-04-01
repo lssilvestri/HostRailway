@@ -25,7 +25,7 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
-                //.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll() // Permitir acceso a la autenticación
@@ -33,7 +33,7 @@ public class SecurityConfig {
                         .requestMatchers("/categorias/**").permitAll()
                         .requestMatchers("/usuarios/**").permitAll()
                         .requestMatchers("/reservas/**").permitAll()
-                        .requestMatchers("api/mascotas/**").permitAll()
+                        .requestMatchers("/api/mascotas/**").permitAll()
                         .requestMatchers("/clientes/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuarios/{usuarioId}/rol/{role}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
@@ -47,22 +47,21 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public CorsConfigurationSource corsConfigurationSource() {
-//        CorsConfiguration configuration = new CorsConfiguration();
-//        configuration.setAllowedOrigins(Arrays.asList(
-//                "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
-//                "http://localhost:5173"
-//        ));// Orígenes permitidos
-//        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitido
-//        configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeceras permitidas
-//        configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens)
-//
-//        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-//        source.registerCorsConfiguration("/**", configuration); // Aplicar a todas las rutas
-//        return source;
-//
-//    }
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
+                "http://localhost:5175"
+        ));// Orígenes permitidos
+        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitido
+        configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeceras permitidas
+        configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens)
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // Aplicar a todas las rutas
+        return source;
+    }
 
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
