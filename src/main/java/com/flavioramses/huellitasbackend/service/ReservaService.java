@@ -33,7 +33,13 @@ public class ReservaService {
     private final MascotaRepository mascotaRepository;
 
     public List<ReservaDTO> getAllReservas() {
-        return reservaRepository.findAll().stream().map(ReservaDTO::fromEntity).collect(Collectors.toList());
+        try {
+            return reservaRepository.findAll().stream()
+                    .map(ReservaDTO::fromEntity)
+                    .collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException("Error al obtener las reservas: " + e.getMessage());
+        }
     }
 
     public List<ReservaDTO> getReservasByEstado(EstadoReserva estado) {
