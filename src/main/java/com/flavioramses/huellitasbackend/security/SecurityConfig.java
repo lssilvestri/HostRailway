@@ -25,22 +25,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .cors(cors -> cors.disable())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Permitir acceso a la autenticación
-                        .requestMatchers("/alojamientos/**").permitAll()
-                        .requestMatchers("/categorias/**").permitAll()
-                        .requestMatchers("/usuarios/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/reservas/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/reservas/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/reservas/**").permitAll()
-                        .requestMatchers(HttpMethod.DELETE, "/reservas/**").permitAll()
-                        .requestMatchers("/api/mascotas/**").permitAll()
-                        .requestMatchers("/clientes/**").permitAll()
-                        .requestMatchers(HttpMethod.PUT, "/usuarios/{usuarioId}/rol/{role}").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
-                        .anyRequest().authenticated()
+                        .requestMatchers("/**").permitAll()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .formLogin(form -> form.disable())
@@ -53,16 +41,13 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
-                "http://localhost:5175"
-        ));// Orígenes permitidos
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS")); // Métodos permitido
-        configuration.setAllowedHeaders(Arrays.asList("*")); // Cabeceras permitidas
-        configuration.setAllowCredentials(true); // Permitir credenciales (cookies, tokens)
+        configuration.setAllowedOrigins(Arrays.asList("*"));
+        configuration.setAllowedMethods(Arrays.asList("*"));
+        configuration.setAllowedHeaders(Arrays.asList("*"));
+        configuration.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration); // Aplicar a todas las rutas
+        source.registerCorsConfiguration("/**", configuration);
         return source;
     }
 
