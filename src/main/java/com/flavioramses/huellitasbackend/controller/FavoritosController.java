@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/favoritos")
 public class FavoritosController {
-
+    @Autowired
     private final AlojamientoFavoritoService favoritoService;
 
     @Autowired

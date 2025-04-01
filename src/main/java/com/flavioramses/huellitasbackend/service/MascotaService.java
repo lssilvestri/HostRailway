@@ -19,8 +19,9 @@ import java.util.Optional;
 @Service
 @RequiredArgsConstructor
 public class MascotaService {
-
+    @Autowired
     private final MascotaRepository mascotaRepository;
+    @Autowired
     private final ClienteRepository clienteRepository;
 
     // Obtener todas las mascotas activas de un cliente

@@ -7,6 +7,7 @@ import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
 import com.flavioramses.huellitasbackend.service.ReservaService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/reservas")
 @RequiredArgsConstructor
 public class ReservaController {
+    @Autowired
     private final ReservaService reservaService;
 
     @GetMapping

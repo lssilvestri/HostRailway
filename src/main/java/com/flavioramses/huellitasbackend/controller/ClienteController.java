@@ -5,6 +5,7 @@ import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.dto.ClienteDTO;
 import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.service.ClienteService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(path = "clientes")
 public class ClienteController {
+    @Autowired
     private final ClienteService clienteService;
 
     public ClienteController(ClienteService clienteService) {

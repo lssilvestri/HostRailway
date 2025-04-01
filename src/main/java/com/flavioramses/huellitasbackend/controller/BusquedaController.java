@@ -16,7 +16,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/busqueda")
 public class BusquedaController {
-
+    @Autowired
     private final BusquedaService busquedaService;
 
     @Autowired

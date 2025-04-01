@@ -23,6 +23,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class MascotaController {
 
+    @Autowired
     private final MascotaService mascotaService;
 
     // Obtener todas las mascotas de un cliente
