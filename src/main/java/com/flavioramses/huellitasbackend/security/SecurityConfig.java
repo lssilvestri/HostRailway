@@ -72,7 +72,7 @@ public class SecurityConfig {
         // Orígenes permitidos
         configuration.setAllowedOrigins(Arrays.asList(
                 "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
-                "http://localhost:5175",
+                "http://localhost:5173",
                 "http://localhost:3000"
         ));
         
