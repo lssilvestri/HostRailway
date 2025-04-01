@@ -5,6 +5,7 @@ import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.Exception.UnauthorizedException;
 import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
+import com.flavioramses.huellitasbackend.model.EstadoReserva;
 import com.flavioramses.huellitasbackend.service.ReservaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
