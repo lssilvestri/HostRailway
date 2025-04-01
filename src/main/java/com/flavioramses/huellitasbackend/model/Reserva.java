@@ -47,8 +47,8 @@ public class Reserva {
         this.mascota = mascota;
         this.alojamiento = alojamiento;
         this.cliente = cliente;
-        this.fechaDesde = dto.getFechaDesde();
-        this.fechaHasta = dto.getFechaHasta();
+        this.fechaDesde = fechaDesde;
+        this.fechaHasta = fechaHasta;
         this.estado = EstadoReserva.PENDIENTE;
         this.fechaCreacion = LocalDateTime.now();
     }

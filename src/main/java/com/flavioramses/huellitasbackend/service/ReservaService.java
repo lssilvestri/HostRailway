@@ -36,6 +36,31 @@ public class ReservaService {
         return reservaRepository.findAll().stream().map(ReservaDTO::fromEntity).collect(Collectors.toList());
     }
 
+    public List<ReservaDTO> getReservasByEstado(EstadoReserva estado) {
+        return reservaRepository.findByEstado(estado).stream().map(ReservaDTO::fromEntity).collect(Collectors.toList());
+    }
+    
+    public List<ReservaDTO> getReservasByAlojamiento(Long alojamientoId) throws ResourceNotFoundException {
+        if (!alojamientoRepository.existsById(alojamientoId)) {
+            throw new ResourceNotFoundException("Alojamiento no encontrado");
+        }
+        return reservaRepository.findByAlojamientoId(alojamientoId).stream().map(ReservaDTO::fromEntity).collect(Collectors.toList());
+    }
+    
+    public List<ReservaDTO> getReservasByMascota(Long mascotaId) throws ResourceNotFoundException {
+        if (!mascotaRepository.existsById(mascotaId)) {
+            throw new ResourceNotFoundException("Mascota no encontrada");
+        }
+        return reservaRepository.findByMascotaId(mascotaId).stream().map(ReservaDTO::fromEntity).collect(Collectors.toList());
+    }
+    
+    public List<ReservaDTO> getReservasByCliente(Long clienteId) throws ResourceNotFoundException {
+        if (!clienteRepository.existsById(clienteId)) {
+            throw new ResourceNotFoundException("Cliente no encontrado");
+        }
+        return reservaRepository.findByClienteIdOrderByFechaCreacionDesc(clienteId).stream().map(ReservaDTO::fromEntity).collect(Collectors.toList());
+    }
+
     public ReservaDTO getReservaById(Long id) throws ResourceNotFoundException {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
@@ -53,6 +78,14 @@ public class ReservaService {
         Alojamiento alojamiento = alojamientoRepository.findById(reservaDTO.getAlojamientoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado"));
 
+        if (reservaDTO.getFechaDesde().isBefore(LocalDate.now())) {
+            throw new BadRequestException("La fecha de inicio debe ser igual o posterior a la fecha actual.");
+        }
+
+        if (reservaDTO.getFechaHasta().isBefore(reservaDTO.getFechaDesde())) {
+            throw new BadRequestException("La fecha de fin debe ser posterior a la fecha de inicio.");
+        }
+
         boolean estaReservado = reservaRepository.existsByAlojamientoAndFechaEntre(
                 alojamiento.getId(), reservaDTO.getFechaDesde(), reservaDTO.getFechaHasta());
 
@@ -67,9 +100,44 @@ public class ReservaService {
     }
 
     @Transactional
-    public ReservaDTO updateReserva(Long id, ReservaNuevaDTO reservaDTO) throws ResourceNotFoundException {
+    public ReservaDTO updateReserva(Long id, ReservaNuevaDTO reservaDTO) throws ResourceNotFoundException, BadRequestException {
         Reserva reserva = reservaRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+
+        if (reserva.getEstado() == EstadoReserva.CANCELADA || reserva.getEstado() == EstadoReserva.COMPLETADA) {
+            throw new BadRequestException("No se puede modificar una reserva cancelada o completada");
+        }
+
+        if (reservaDTO.getFechaDesde().isBefore(LocalDate.now())) {
+            throw new BadRequestException("La fecha de inicio debe ser igual o posterior a la fecha actual.");
+        }
+
+        if (reservaDTO.getFechaHasta().isBefore(reservaDTO.getFechaDesde())) {
+            throw new BadRequestException("La fecha de fin debe ser posterior a la fecha de inicio.");
+        }
+
+        boolean estaReservado = reservaRepository.findReservasActivasEnRango(
+                reservaDTO.getFechaDesde(), reservaDTO.getFechaHasta())
+                .stream()
+                .filter(r -> !r.getId().equals(id) && r.getAlojamiento().getId().equals(reserva.getAlojamiento().getId()))
+                .findAny()
+                .isPresent();
+
+        if (estaReservado) {
+            throw new BadRequestException("El alojamiento ya está reservado en esas fechas.");
+        }
+
+        if (reservaDTO.getMascotaId() != null && !reservaDTO.getMascotaId().equals(reserva.getMascota().getId())) {
+            Mascota mascota = mascotaRepository.findById(reservaDTO.getMascotaId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Mascota no encontrada"));
+            reserva.setMascota(mascota);
+        }
+        
+        if (reservaDTO.getAlojamientoId() != null && !reservaDTO.getAlojamientoId().equals(reserva.getAlojamiento().getId())) {
+            Alojamiento alojamiento = alojamientoRepository.findById(reservaDTO.getAlojamientoId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Alojamiento no encontrado"));
+            reserva.setAlojamiento(alojamiento);
+        }
 
         reserva.setFechaDesde(reservaDTO.getFechaDesde());
         reserva.setFechaHasta(reservaDTO.getFechaHasta());
@@ -98,7 +166,29 @@ public class ReservaService {
             throw new BadRequestException("No se pueden cancelar reservas ya iniciadas o finalizadas.");
         }
 
-        reservaRepository.delete(reserva);
-        return ReservaDTO.fromEntity(reserva);
+        reserva.setEstado(EstadoReserva.CANCELADA);
+        return ReservaDTO.fromEntity(reservaRepository.save(reserva));
+    }
+
+    @Transactional
+    public ReservaDTO confirmarReserva(Long reservaId) throws ResourceNotFoundException {
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+                
+        reserva.setEstado(EstadoReserva.CONFIRMADA);
+        return ReservaDTO.fromEntity(reservaRepository.save(reserva));
+    }
+    
+    @Transactional
+    public ReservaDTO completarReserva(Long reservaId) throws ResourceNotFoundException, BadRequestException {
+        Reserva reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new ResourceNotFoundException("Reserva no encontrada"));
+                
+        if (LocalDate.now().isBefore(reserva.getFechaHasta())) {
+            throw new BadRequestException("No se puede completar una reserva antes de su fecha de finalización.");
+        }
+        
+        reserva.setEstado(EstadoReserva.COMPLETADA);
+        return ReservaDTO.fromEntity(reservaRepository.save(reserva));
     }
 }

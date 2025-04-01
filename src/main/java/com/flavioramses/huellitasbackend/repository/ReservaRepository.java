@@ -40,6 +40,15 @@ public interface ReservaRepository extends JpaRepository<Reserva, Long> {
             @Param("alojamientoId") Long alojamientoId,
             @Param("fechaInicio") LocalDate fechaInicio,
             @Param("fechaFin") LocalDate fechaFin);
+
+    // Obtener reservas por estado
+    List<Reserva> findByEstado(EstadoReserva estado);
+    
+    // Obtener reservas por alojamiento
+    List<Reserva> findByAlojamientoId(Long alojamientoId);
+    
+    // Obtener reservas por mascota
+    List<Reserva> findByMascotaId(Long mascotaId);
 }
 
 
