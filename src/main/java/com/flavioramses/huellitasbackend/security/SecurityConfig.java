@@ -37,6 +37,9 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET, "/alojamientos/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
                         
+                        // Rutas de favoritos
+                        .requestMatchers("/favoritos/**").permitAll()
+                        
                         // Rutas de reservas
                         .requestMatchers(HttpMethod.GET, "/reservas/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/reservas/**").permitAll() 
