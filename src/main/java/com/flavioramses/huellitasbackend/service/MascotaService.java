@@ -78,6 +78,10 @@ public class MascotaService {
         mascota.setActivo(activo);
         return mascotaRepository.save(mascota);
     }
+
+    public List<Mascota> getAllMascotas() {
+        return mascotaRepository.findAll();
+    }
 }
 
 

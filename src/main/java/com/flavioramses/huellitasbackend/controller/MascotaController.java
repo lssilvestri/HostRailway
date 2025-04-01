@@ -4,6 +4,7 @@ import com.flavioramses.huellitasbackend.Exception.BadRequestException;
 import com.flavioramses.huellitasbackend.Exception.ResourceNotFoundException;
 import com.flavioramses.huellitasbackend.Exception.UnauthorizedException;
 import com.flavioramses.huellitasbackend.dto.MascotaDTO;
+import com.flavioramses.huellitasbackend.model.Categoria;
 import com.flavioramses.huellitasbackend.model.Cliente;
 import com.flavioramses.huellitasbackend.model.Mascota;
 import com.flavioramses.huellitasbackend.service.ClienteService;
@@ -31,6 +32,10 @@ public class MascotaController {
     public ResponseEntity<List<MascotaDTO>> getMascotasByClienteId(@PathVariable Long clienteId) {
         List<Mascota> mascotas = mascotaService.getMascotasByClienteId(clienteId);
         return ResponseEntity.ok(MascotaDTO.toMascotaDTOList(mascotas));
+    }
+    @GetMapping
+    public List<Mascota> getAllMascota() {
+        return mascotaService.getAllMascotas();
     }
 
     // Obtener una mascota por ID (validando que pertenezca al usuario)
