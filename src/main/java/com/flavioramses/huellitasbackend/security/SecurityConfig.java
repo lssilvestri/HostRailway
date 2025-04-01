@@ -40,6 +40,12 @@ public class SecurityConfig {
                         // Rutas de favoritos
                         .requestMatchers("/favoritos/**").permitAll()
                         
+                        // Swagger / OpenAPI endpoints
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        
                         // Rutas de reservas
                         .requestMatchers(HttpMethod.GET, "/reservas/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/reservas/**").permitAll() 
