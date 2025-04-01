@@ -43,29 +43,22 @@ public class ReservaService {
             return reservas.stream()
                     .map(reserva -> {
                         try {
-                            // Inicializar las relaciones lazy de manera segura
-                            if (reserva.getMascota() != null) {
-                                reserva.getMascota().getId();
-                            }
-                            if (reserva.getAlojamiento() != null) {
-                                reserva.getAlojamiento().getId();
-                            }
-                            if (reserva.getCliente() != null) {
-                                reserva.getCliente().getId();
-                                if (reserva.getCliente().getUsuario() != null) {
-                                    reserva.getCliente().getUsuario().getId();
-                                }
-                            }
+                            // Convertimos directamente a DTO para evitar problemas de serialización
                             return ReservaDTO.fromEntity(reserva);
                         } catch (Exception e) {
-                            // Si hay un error al procesar una reserva, la omitimos
+                            // Si hay un error al procesar una reserva, la omitimos y registramos el error
+                            System.err.println("Error al procesar reserva ID " + 
+                                (reserva != null && reserva.getId() != null ? reserva.getId() : "desconocido") + 
+                                ": " + e.getMessage());
                             return null;
                         }
                     })
                     .filter(dto -> dto != null)
                     .collect(Collectors.toList());
         } catch (Exception e) {
-            throw new RuntimeException("Error al obtener las reservas: " + e.getMessage());
+            System.err.println("Error general al obtener las reservas: " + e.getMessage());
+            e.printStackTrace();
+            throw new RuntimeException("Error al obtener las reservas: " + e.getMessage(), e);
         }
     }
 
@@ -126,8 +119,7 @@ public class ReservaService {
             throw new BadRequestException("El alojamiento ya está reservado en esas fechas.");
         }
 
-        Reserva reserva = new Reserva(null, mascota, alojamiento, cliente, reservaDTO.getFechaDesde(),
-                reservaDTO.getFechaHasta(), EstadoReserva.PENDIENTE, LocalDateTime.now());
+        Reserva reserva = new Reserva(mascota, alojamiento, cliente, reservaDTO.getFechaDesde(), reservaDTO.getFechaHasta());
 
         return ReservaDTO.fromEntity(reservaRepository.save(reserva));
     }

@@ -6,12 +6,14 @@ import com.flavioramses.huellitasbackend.dto.ReservaDTO;
 import com.flavioramses.huellitasbackend.dto.ReservaNuevaDTO;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
 @Data
+@NoArgsConstructor
 @Entity
 @Table(name = "reservas")
 public class Reserva {
@@ -54,6 +56,16 @@ public class Reserva {
         this.fechaHasta = fechaHasta;
         this.estado = estado;
         this.fechaCreacion = fechaCreacion;
+    }
+
+    public Reserva(Mascota mascota, Alojamiento alojamiento, Cliente cliente, LocalDate fechaDesde, LocalDate fechaHasta) {
+        this.mascota = mascota;
+        this.alojamiento = alojamiento;
+        this.cliente = cliente;
+        this.fechaDesde = fechaDesde;
+        this.fechaHasta = fechaHasta;
+        this.estado = EstadoReserva.PENDIENTE;
+        this.fechaCreacion = LocalDateTime.now();
     }
 
     public ReservaDTO toReservaDTO() {
