@@ -20,8 +20,6 @@ public class PerfilService {
     private final ClienteRepository clienteRepository;
     
     public PerfilUsuarioDTO obtenerPerfil(Long usuarioId) throws ResourceNotFoundException {
-        log.info("Obteniendo perfil para el usuario con ID: {}", usuarioId);
-        
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario con id " + usuarioId + " no encontrado"));
         
@@ -31,11 +29,8 @@ public class PerfilService {
         return PerfilUsuarioDTO.fromEntities(usuario, cliente);
     }
     
-
     @Transactional
     public PerfilUsuarioDTO actualizarPerfil(Long usuarioId, PerfilUsuarioDTO perfilDTO) throws ResourceNotFoundException {
-        log.info("Actualizando perfil para el usuario con ID: {}", usuarioId);
-        
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario con id " + usuarioId + " no encontrado"));
         
@@ -50,8 +45,6 @@ public class PerfilService {
         
         usuarioRepository.save(usuario);
         clienteRepository.save(cliente);
-        
-        log.info("Perfil actualizado correctamente para el usuario: {}", usuarioId);
         
         return PerfilUsuarioDTO.fromEntities(usuario, cliente);
     }

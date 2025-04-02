@@ -28,9 +28,7 @@ public class PerfilController {
     @Operation(summary = "Obtener perfil de usuario", description = "Obtiene los datos del perfil del usuario autenticado")
     public ResponseEntity<PerfilUsuarioDTO> obtenerPerfilUsuario(@AuthenticationPrincipal UserDetails userDetails) 
             throws ResourceNotFoundException {
-        
         Long usuarioId = usuarioService.getUsuarioByEmail(userDetails.getUsername()).getId();
-        
         PerfilUsuarioDTO perfil = perfilService.obtenerPerfil(usuarioId);
         return ResponseEntity.ok(perfil);
     }
@@ -41,17 +39,7 @@ public class PerfilController {
             @AuthenticationPrincipal UserDetails userDetails,
             @Parameter(description = "Datos actualizados del perfil", required = true) @RequestBody PerfilUsuarioDTO perfilDTO) 
             throws ResourceNotFoundException {
-        
-        log.info("Recibida solicitud para actualizar perfil a través de token. UserDetails: {}", userDetails);
-        
-        if (userDetails == null || userDetails.getUsername() == null) {
-            log.error("No se pudo obtener la información del usuario del token");
-            throw new ResourceNotFoundException("No se pudo obtener la información del usuario del token");
-        }
-        
         Long usuarioId = usuarioService.getUsuarioByEmail(userDetails.getUsername()).getId();
-        log.info("ID de usuario obtenido del token: {}", usuarioId);
-        
         PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(usuarioId, perfilDTO);
         return ResponseEntity.ok(perfilActualizado);
     }
@@ -62,18 +50,15 @@ public class PerfilController {
             @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
             @Parameter(description = "Datos actualizados del perfil", required = true) @RequestBody PerfilUsuarioDTO perfilDTO) 
             throws ResourceNotFoundException {
-        
-        log.info("Actualizando perfil directamente con ID: {}", id);
         PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(id, perfilDTO);
         return ResponseEntity.ok(perfilActualizado);
     }
     
     @GetMapping("/{id}")
-    @Operation(summary = "Obtener perfil por ID", description = "Obtiene los datos del perfil por ID de usuario (solo para administradores)")
+    @Operation(summary = "Obtener perfil por ID", description = "Obtiene los datos del perfil por ID de usuario")
     public ResponseEntity<PerfilUsuarioDTO> obtenerPerfilPorId(
             @Parameter(description = "ID del usuario", required = true) @PathVariable Long id) 
             throws ResourceNotFoundException {
-        
         PerfilUsuarioDTO perfil = perfilService.obtenerPerfil(id);
         return ResponseEntity.ok(perfil);
     }
