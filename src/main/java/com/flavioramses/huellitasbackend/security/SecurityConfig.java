@@ -29,17 +29,43 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        // Endpoints públicos
-                        .requestMatchers("/api/auth/**", "/test/status", "/busqueda/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/alojamientos/**", "/categorias/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/api-docs/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        // Autenticación
+                        .requestMatchers("/api/auth/**").permitAll()
                         
-                        // Endpoints que requieren autenticación (pero que hemos configurado para permitir acceso público por ahora)
-                        .requestMatchers("/perfil/**", "/favoritos/**", "/clientes/**", "/usuarios/**", "/api/mascotas/**").permitAll()
+                        // Mantener solo el endpoint de test/status
+                        .requestMatchers("/test/status").permitAll()
+                        
+                        // Rutas públicas para búsqueda y consulta
+                        .requestMatchers("/busqueda/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/alojamientos/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/categorias/**").permitAll()
+                        
+                        // Rutas de favoritos
+                        .requestMatchers("/favoritos/**").permitAll()
+                        
+                        // Rutas de perfil
+                        .requestMatchers("/perfil/**").permitAll()
+                        
+                        // Swagger / OpenAPI endpoints
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/api-docs/**").permitAll()
+                        .requestMatchers("/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
+                        
+                        // Rutas de reservas
                         .requestMatchers(HttpMethod.GET, "/reservas/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/reservas/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/reservas/**").permitAll() 
                         .requestMatchers(HttpMethod.PUT, "/reservas/**").permitAll()
                         .requestMatchers(HttpMethod.DELETE, "/reservas/**").permitAll()
+                        
+                        // Rutas de mascotas
+                        .requestMatchers("/api/mascotas/**").permitAll()
+                        
+                        // Rutas de clientes
+                        .requestMatchers("/clientes/**").permitAll()
+                        
+                        // Rutas de usuarios
+                        .requestMatchers("/usuarios/**").permitAll()
                         .requestMatchers(HttpMethod.PUT, "/usuarios/{usuarioId}/rol/{role}").permitAll()
                         .requestMatchers(HttpMethod.POST, "/usuarios").permitAll()
                         
@@ -58,7 +84,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         
-        // Orígenes permitidos
+        // Orígenes permitidos específicos para credenciales
         configuration.setAllowedOrigins(Arrays.asList(
             "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app", 
             "http://localhost:5173",
@@ -66,20 +92,23 @@ public class SecurityConfig {
             "https://rare-compassion-production.up.railway.app"
         ));
         
-        // Métodos HTTP permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        
-        // Cabeceras permitidas
         configuration.setAllowedHeaders(Arrays.asList(
-                "Origin", "Content-Type", "Accept", "Authorization", 
-                "X-Requested-With", "Access-Control-Request-Method", "Access-Control-Request-Headers"
+                "Origin", 
+                "Content-Type", 
+                "Accept", 
+                "Authorization", 
+                "X-Requested-With", 
+                "Access-Control-Request-Method", 
+                "Access-Control-Request-Headers"
         ));
-        
-        // Cabeceras expuestas
         configuration.setExposedHeaders(Arrays.asList(
-                "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials", "Authorization"
+                "Access-Control-Allow-Origin", 
+                "Access-Control-Allow-Credentials", 
+                "Authorization"
         ));
         
+        // Permitir credenciales para que el token se procese correctamente
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 
