@@ -9,31 +9,32 @@ import com.flavioramses.huellitasbackend.repository.ClienteRepository;
 import com.flavioramses.huellitasbackend.repository.MascotaRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MascotaService {
-    @Autowired
     private final MascotaRepository mascotaRepository;
-    @Autowired
     private final ClienteRepository clienteRepository;
 
     public List<Mascota> getMascotasByClienteId(Long clienteId) {
-        return mascotaRepository.findByClienteIdAndActivoTrue(clienteId);
+        log.info("Obteniendo mascotas para el cliente con ID: {}", clienteId);
+        return mascotaRepository.findByClienteId(clienteId);
     }
 
     public Mascota getMascotaByIdAndCliente(Long id, Long clienteId) throws ResourceNotFoundException {
+        log.info("Buscando mascota con ID: {} para el cliente: {}", id, clienteId);
         return mascotaRepository.findByIdAndClienteId(id, clienteId)
                 .orElseThrow(() -> new ResourceNotFoundException("Mascota no encontrada o no pertenece al cliente."));
     }
 
     public Mascota saveMascota(MascotaDTO mascotaDTO) throws ResourceNotFoundException {
+        log.info("Guardando nueva mascota para el cliente con ID: {}", mascotaDTO.getClienteId());
         Cliente cliente = clienteRepository.findById(mascotaDTO.getClienteId())
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente no encontrado."));
 
@@ -47,10 +48,13 @@ public class MascotaService {
         mascota.setActivo(true);
         mascota.setCliente(cliente);
 
-        return mascotaRepository.save(mascota);
+        Mascota mascotaGuardada = mascotaRepository.save(mascota);
+        log.info("Mascota guardada con ID: {}", mascotaGuardada.getId());
+        return mascotaGuardada;
     }
 
     public Mascota updateMascota(Long id, Long clienteId, MascotaDTO mascotaDTO) throws ResourceNotFoundException {
+        log.info("Actualizando mascota con ID: {} para el cliente: {}", id, clienteId);
         Mascota mascota = getMascotaByIdAndCliente(id, clienteId);
         mascota.setNombre(mascotaDTO.getNombre());
         mascota.setEspecie(mascotaDTO.getEspecie());
@@ -58,22 +62,31 @@ public class MascotaService {
         mascota.setPeso(mascotaDTO.getPeso());
         mascota.setEdad(mascotaDTO.getEdad());
         mascota.setObservaciones(mascotaDTO.getObservaciones());
-        return mascotaRepository.save(mascota);
+        
+        Mascota mascotaActualizada = mascotaRepository.save(mascota);
+        log.info("Mascota actualizada: {}", mascotaActualizada.getId());
+        return mascotaActualizada;
     }
 
     public void deleteMascotaById(Long id, Long clienteId) throws ResourceNotFoundException {
+        log.info("Eliminando mascota con ID: {} para el cliente: {}", id, clienteId);
         Mascota mascota = getMascotaByIdAndCliente(id, clienteId);
         mascotaRepository.delete(mascota);
+        log.info("Mascota eliminada");
     }
 
     @Transactional
     public Mascota cambiarEstadoMascota(Long id, Long clienteId, boolean activo) throws ResourceNotFoundException {
+        log.info("Cambiando estado de mascota con ID: {} a activo: {}", id, activo);
         Mascota mascota = getMascotaByIdAndCliente(id, clienteId);
         mascota.setActivo(activo);
-        return mascotaRepository.save(mascota);
+        Mascota mascotaActualizada = mascotaRepository.save(mascota);
+        log.info("Estado de mascota actualizado");
+        return mascotaActualizada;
     }
 
     public List<Mascota> getAllMascotas() {
+        log.info("Obteniendo todas las mascotas");
         return mascotaRepository.findAll();
     }
 }

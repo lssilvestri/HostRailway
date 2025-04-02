@@ -54,9 +54,6 @@ public class UsuarioService implements UserDetailsService {
         return usuarioRepository.save(usuario);
     }
 
-    public List<Usuario> getUsersByRole(RolUsuario role) {
-        return usuarioRepository.findByRol(role);
-    }
 
     @Transactional
     public void deleteUsuarioById(Long id) {
