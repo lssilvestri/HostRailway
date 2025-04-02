@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,6 +17,7 @@ import com.flavioramses.huellitasbackend.service.UsuarioService;
 @RestController
 @RequestMapping("/perfil")
 @RequiredArgsConstructor
+@Slf4j
 @Tag(name = "Perfil", description = "Operaciones relacionadas con el perfil del usuario")
 public class PerfilController {
     
@@ -54,5 +56,18 @@ public class PerfilController {
         
         PerfilUsuarioDTO perfil = perfilService.obtenerPerfil(id);
         return ResponseEntity.ok(perfil);
+    }
+    
+    // Endpoint adicional para pruebas sin autenticación
+    @PutMapping("/test/{id}")
+    @Operation(summary = "Actualizar perfil (prueba)", description = "Actualiza los datos del perfil sin requerir autenticación (solo para pruebas)")
+    public ResponseEntity<PerfilUsuarioDTO> actualizarPerfilTest(
+            @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
+            @Parameter(description = "Datos actualizados del perfil", required = true) @RequestBody PerfilUsuarioDTO perfilDTO) 
+            throws ResourceNotFoundException {
+        
+        log.info("Actualizando perfil para prueba con ID: {}", id);
+        PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(id, perfilDTO);
+        return ResponseEntity.ok(perfilActualizado);
     }
 } 

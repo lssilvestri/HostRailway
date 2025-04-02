@@ -32,6 +32,10 @@ public class SecurityConfig {
                         // Autenticación
                         .requestMatchers("/api/auth/**").permitAll()
                         
+                        // Endpoints de prueba
+                        .requestMatchers("/test/**").permitAll()
+                        .requestMatchers("/perfil/test/**").permitAll()
+                        
                         // Rutas públicas para búsqueda y consulta
                         .requestMatchers("/busqueda/**").permitAll()
                         .requestMatchers(HttpMethod.GET, "/alojamientos/**").permitAll()
