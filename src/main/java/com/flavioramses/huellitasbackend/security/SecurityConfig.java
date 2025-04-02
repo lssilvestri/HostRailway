@@ -80,12 +80,8 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "https://rare-compassion-production.up.railway.app"
-        ));
+        // Permitir todas las solicitudes de cualquier origen durante las pruebas
+        configuration.addAllowedOrigin("*");
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
         configuration.setAllowedHeaders(Arrays.asList(
                 "Origin", 
@@ -102,7 +98,8 @@ public class SecurityConfig {
                 "Authorization"
         ));
         
-        configuration.setAllowCredentials(true);
+        // Para permitir credenciales, no podemos usar "*" como origen, así que desactivamos esto por ahora
+        configuration.setAllowCredentials(false);
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
