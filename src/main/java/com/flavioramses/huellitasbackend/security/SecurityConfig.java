@@ -40,6 +40,9 @@ public class SecurityConfig {
                         // Rutas de favoritos
                         .requestMatchers("/favoritos/**").permitAll()
                         
+                        // Rutas de perfil
+                        .requestMatchers("/perfil/**").permitAll()
+                        
                         // Swagger / OpenAPI endpoints
                         .requestMatchers("/swagger-ui/**").permitAll()
                         .requestMatchers("/api-docs/**").permitAll()
