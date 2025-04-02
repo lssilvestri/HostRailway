@@ -42,9 +42,29 @@ public class PerfilController {
             @Parameter(description = "Datos actualizados del perfil", required = true) @RequestBody PerfilUsuarioDTO perfilDTO) 
             throws ResourceNotFoundException {
         
+        log.info("Recibida solicitud para actualizar perfil a través de token. UserDetails: {}", userDetails);
+        
+        if (userDetails == null || userDetails.getUsername() == null) {
+            log.error("No se pudo obtener la información del usuario del token");
+            throw new ResourceNotFoundException("No se pudo obtener la información del usuario del token");
+        }
+        
         Long usuarioId = usuarioService.getUsuarioByEmail(userDetails.getUsername()).getId();
+        log.info("ID de usuario obtenido del token: {}", usuarioId);
         
         PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(usuarioId, perfilDTO);
+        return ResponseEntity.ok(perfilActualizado);
+    }
+    
+    @PutMapping("/{id}")
+    @Operation(summary = "Actualizar perfil por ID", description = "Actualiza los datos del perfil usando el ID del usuario directamente")
+    public ResponseEntity<PerfilUsuarioDTO> actualizarPerfilPorId(
+            @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
+            @Parameter(description = "Datos actualizados del perfil", required = true) @RequestBody PerfilUsuarioDTO perfilDTO) 
+            throws ResourceNotFoundException {
+        
+        log.info("Actualizando perfil directamente con ID: {}", id);
+        PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(id, perfilDTO);
         return ResponseEntity.ok(perfilActualizado);
     }
     

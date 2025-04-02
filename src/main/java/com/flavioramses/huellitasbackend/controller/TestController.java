@@ -141,4 +141,40 @@ public class TestController {
                     .body(Map.of("error", "Error al actualizar perfil: " + e.getMessage()));
         }
     }
+
+    @PutMapping("/actualizar-perfil-email")
+    public ResponseEntity<?> actualizarPerfilPorEmail(@RequestBody Map<String, Object> datos) {
+        try {
+            log.info("Actualizando perfil mediante email: {}", datos);
+            
+            // Extraer email y datos del perfil
+            String email = (String) datos.get("email");
+            if (email == null || email.isEmpty()) {
+                return ResponseEntity.badRequest().body(Map.of("error", "El email es requerido"));
+            }
+            
+            // Buscar usuario por email
+            Usuario usuario = usuarioRepository.findByEmail(email)
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuario con email " + email + " no encontrado"));
+            
+            // Crear objeto PerfilUsuarioDTO con los datos recibidos
+            PerfilUsuarioDTO perfilDTO = new PerfilUsuarioDTO();
+            perfilDTO.setNombre((String) datos.get("nombre"));
+            perfilDTO.setApellido((String) datos.get("apellido"));
+            perfilDTO.setEmail(email);
+            perfilDTO.setNumeroTelefono((String) datos.get("numeroTelefono"));
+            
+            // Actualizar perfil
+            PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(usuario.getId(), perfilDTO);
+            return ResponseEntity.ok(perfilActualizado);
+        } catch (ResourceNotFoundException e) {
+            log.error("No se encontró el usuario: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            log.error("Error al actualizar perfil por email: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al actualizar perfil: " + e.getMessage()));
+        }
+    }
 } 
