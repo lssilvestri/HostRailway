@@ -36,7 +36,7 @@ public class CategoriaService {
                     }
                     categoria.setNombre(categoriaNueva.getNombre());
                     categoria.setDescripcion(categoriaNueva.getDescripcion());
-                    categoria.setImagenUrl(categoriaNueva.getImagenUrl()); // Permite actualizar la URL de la imagen
+                    categoria.setImagenUrl(categoriaNueva.getImagenUrl());
                     return categoriaRepository.save(categoria);
                 })
                 .orElseThrow(() -> new ResourceNotFoundException("Categoría no encontrada con ID: " + id));

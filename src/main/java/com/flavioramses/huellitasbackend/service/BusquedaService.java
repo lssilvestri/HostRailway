@@ -13,9 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Servicio para gestionar búsquedas de alojamientos disponibles.
- */
+
 @Service
 public class BusquedaService {
     
@@ -26,14 +24,6 @@ public class BusquedaService {
         this.alojamientoRepository = alojamientoRepository;
     }
 
-    /**
-     * Busca alojamientos disponibles en un rango de fechas y opcionalmente por nombre.
-     * 
-     * @param fechaInicio Fecha de inicio para la disponibilidad
-     * @param fechaFin Fecha de fin para la disponibilidad
-     * @param nombre Nombre o parte del nombre del alojamiento (opcional)
-     * @return Lista de alojamientos disponibles que coinciden con los criterios
-     */
     @Transactional(readOnly = true)
     public List<AlojamientoDTO> buscarAlojamientosDisponibles(LocalDate fechaInicio, LocalDate fechaFin, String nombre) {
         if (fechaInicio.isAfter(fechaFin)) {
@@ -52,14 +42,6 @@ public class BusquedaService {
                 .collect(Collectors.toList());
     }
     
-    /**
-     * Verifica si un alojamiento específico está disponible en un rango de fechas.
-     * 
-     * @param alojamientoId ID del alojamiento a verificar
-     * @param fechaInicio Fecha de inicio para verificar disponibilidad
-     * @param fechaFin Fecha de fin para verificar disponibilidad
-     * @return true si está disponible, false si no
-     */
     @Transactional(readOnly = true)
     public boolean verificarDisponibilidad(Long alojamientoId, LocalDate fechaInicio, LocalDate fechaFin) {
         if (fechaInicio.isAfter(fechaFin)) {
@@ -69,9 +51,7 @@ public class BusquedaService {
         return alojamientoRepository.isDisponibleEnFechas(alojamientoId, fechaInicio, fechaFin);
     }
 
-    /**
-     * Convierte una entidad Alojamiento a su DTO correspondiente.
-     */
+
     private AlojamientoDTO convertirADTO(Alojamiento alojamiento) {
         return new AlojamientoDTO(
                 alojamiento.getId(),
@@ -82,7 +62,7 @@ public class BusquedaService {
                 alojamiento.getImagenes().stream()
                     .map(ImagenAlojamiento::getUrlImagen)
                     .collect(Collectors.toList()),
-                new ArrayList<>() // Características vendrán de la entidad Alojamiento si es necesario
+                new ArrayList<>()
         );
     }
 }

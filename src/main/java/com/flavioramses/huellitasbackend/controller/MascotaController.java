@@ -27,7 +27,6 @@ public class MascotaController {
     @Autowired
     private final MascotaService mascotaService;
 
-    // Obtener todas las mascotas de un cliente
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<List<MascotaDTO>> getMascotasByClienteId(@PathVariable Long clienteId) {
         List<Mascota> mascotas = mascotaService.getMascotasByClienteId(clienteId);
@@ -38,21 +37,18 @@ public class MascotaController {
         return mascotaService.getAllMascotas();
     }
 
-    // Obtener una mascota por ID (validando que pertenezca al usuario)
     @GetMapping("/{id}/cliente/{clienteId}")
     public ResponseEntity<MascotaDTO> getMascotaById(@PathVariable Long id, @PathVariable Long clienteId) throws ResourceNotFoundException {
         Mascota mascota = mascotaService.getMascotaByIdAndCliente(id, clienteId);
         return ResponseEntity.ok(MascotaDTO.toMascotaDTO(mascota));
     }
 
-    // Registrar una nueva mascota
     @PostMapping
     public ResponseEntity<MascotaDTO> saveMascota(@RequestBody MascotaDTO mascotaDTO) throws ResourceNotFoundException {
         Mascota nuevaMascota = mascotaService.saveMascota(mascotaDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(MascotaDTO.toMascotaDTO(nuevaMascota));
     }
 
-    // Actualizar una mascota (validando propietario)
     @PutMapping("/{id}/cliente/{clienteId}")
     public ResponseEntity<MascotaDTO> updateMascota(
             @PathVariable Long id,
@@ -62,14 +58,12 @@ public class MascotaController {
         return ResponseEntity.ok(MascotaDTO.toMascotaDTO(mascotaActualizada));
     }
 
-    // Eliminar una mascota (validando propietario)
     @DeleteMapping("/{id}/cliente/{clienteId}")
     public ResponseEntity<Void> deleteMascotaById(@PathVariable Long id, @PathVariable Long clienteId) throws ResourceNotFoundException {
         mascotaService.deleteMascotaById(id, clienteId);
         return ResponseEntity.noContent().build();
     }
 
-    // Activar/desactivar una mascota (en lugar de eliminarla)
     @PatchMapping("/{id}/cliente/{clienteId}/estado")
     public ResponseEntity<MascotaDTO> cambiarEstadoMascota(
             @PathVariable Long id,

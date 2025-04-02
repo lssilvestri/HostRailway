@@ -1,5 +1,4 @@
 package com.flavioramses.huellitasbackend.config;
-
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Contact;
 import io.swagger.v3.oas.models.info.Info;
@@ -10,17 +9,8 @@ import org.springframework.context.annotation.Configuration;
 
 import java.util.List;
 
-/**
- * Configuración de OpenAPI (Swagger) para documentar la API.
- */
 @Configuration
 public class OpenApiConfig {
-
-    /**
-     * Configura la documentación de OpenAPI.
-     *
-     * @return Configuración de OpenAPI
-     */
     @Bean
     public OpenAPI huellitasOpenAPI() {
         Server localServer = new Server()

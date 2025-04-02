@@ -99,7 +99,7 @@ public class UsuarioService implements UserDetailsService {
         usuario.setNombre(usuarioDTO.getNombre());
         usuario.setApellido(usuarioDTO.getApellido());
         usuario.setEmail(usuarioDTO.getEmail());
-        usuario.setRol(RolUsuario.valueOf(String.valueOf(usuarioDTO.getRol()))); // Convierte el String del rol a RolUsuario
+        usuario.setRol(RolUsuario.valueOf(String.valueOf(usuarioDTO.getRol())));
 
         return usuarioRepository.save(usuario);
     }

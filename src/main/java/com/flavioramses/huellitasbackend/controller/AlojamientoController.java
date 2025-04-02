@@ -31,7 +31,6 @@ public class AlojamientoController {
     @PostMapping
     public ResponseEntity<Alojamiento> saveAlojamiento(@RequestBody AlojamientoDTO alojamientoDTO) throws ResourceNotFoundException, BadRequestException {
         try {
-            // Validación de la categoría
             if (alojamientoDTO.getCategoriaId() == null) {
                 throw new BadRequestException("El ID de la categoría no puede ser nulo.");
             }

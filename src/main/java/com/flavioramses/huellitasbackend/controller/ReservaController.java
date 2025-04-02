@@ -26,11 +26,6 @@ public class ReservaController {
     
     private final ReservaService reservaService;
 
-    /**
-     * Obtiene todas las reservas.
-     * 
-     * @return Lista de reservas
-     */
     @GetMapping
     public ResponseEntity<?> getAllReservas() {
         try {
@@ -42,12 +37,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Obtiene reservas por estado.
-     * 
-     * @param estado Estado de las reservas a obtener
-     * @return Lista de reservas en el estado especificado
-     */
     @GetMapping("/estado/{estado}")
     public ResponseEntity<?> getReservasByEstado(@PathVariable EstadoReserva estado) {
         try {
@@ -58,12 +47,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Obtiene reservas por alojamiento.
-     * 
-     * @param alojamientoId ID del alojamiento
-     * @return Lista de reservas para el alojamiento especificado
-     */
     @GetMapping("/alojamiento/{alojamientoId}")
     public ResponseEntity<?> getReservasByAlojamiento(@PathVariable Long alojamientoId) {
         try {
@@ -76,12 +59,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Obtiene reservas por mascota.
-     * 
-     * @param mascotaId ID de la mascota
-     * @return Lista de reservas para la mascota especificada
-     */
     @GetMapping("/mascota/{mascotaId}")
     public ResponseEntity<?> getReservasByMascota(@PathVariable Long mascotaId) {
         try {
@@ -94,12 +71,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Obtiene reservas por cliente.
-     * 
-     * @param clienteId ID del cliente
-     * @return Lista de reservas del cliente especificado
-     */
     @GetMapping("/cliente/{clienteId}")
     public ResponseEntity<?> getReservasByCliente(@PathVariable Long clienteId) {
         try {
@@ -112,12 +83,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Obtiene una reserva por ID.
-     * 
-     * @param id ID de la reserva
-     * @return Reserva encontrada
-     */
     @GetMapping("/{id}")
     public ResponseEntity<?> getReservaById(@PathVariable Long id) {
         try {
@@ -130,12 +95,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Crea una nueva reserva.
-     * 
-     * @param reservaDTO Datos de la nueva reserva
-     * @return Reserva creada
-     */
     @PostMapping
     public ResponseEntity<?> saveReserva(@RequestBody ReservaNuevaDTO reservaDTO) {
         try {
@@ -150,13 +109,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Actualiza una reserva existente.
-     * 
-     * @param id ID de la reserva a actualizar
-     * @param reservaDTO Nuevos datos de la reserva
-     * @return Reserva actualizada
-     */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateReserva(@PathVariable Long id, @RequestBody ReservaNuevaDTO reservaDTO) {
         try {
@@ -171,12 +123,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Elimina una reserva.
-     * 
-     * @param id ID de la reserva a eliminar
-     * @return Sin contenido
-     */
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteReserva(@PathVariable Long id) {
         try {
@@ -190,13 +136,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Cancela una reserva.
-     * 
-     * @param reservaId ID de la reserva a cancelar
-     * @param clienteId ID del cliente que realiza la cancelación
-     * @return Reserva cancelada
-     */
     @PostMapping("/{reservaId}/cancelar")
     public ResponseEntity<?> cancelarReserva(@PathVariable Long reservaId, @RequestParam Long clienteId) {
         try {
@@ -213,12 +152,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Confirma una reserva.
-     * 
-     * @param reservaId ID de la reserva a confirmar
-     * @return Reserva confirmada
-     */
     @PostMapping("/{reservaId}/confirmar")
     public ResponseEntity<?> confirmarReserva(@PathVariable Long reservaId) {
         try {
@@ -231,12 +164,6 @@ public class ReservaController {
         }
     }
 
-    /**
-     * Marca una reserva como completada.
-     * 
-     * @param reservaId ID de la reserva a completar
-     * @return Reserva completada
-     */
     @PostMapping("/{reservaId}/completar")
     public ResponseEntity<?> completarReserva(@PathVariable Long reservaId) {
         try {

@@ -77,18 +77,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // Orígenes permitidos
         configuration.setAllowedOrigins(Arrays.asList(
                 "https://grupo-4-proyecto-integrador-dh-frontend-1ep1.vercel.app",
                 "http://localhost:5173",
                 "http://localhost:3000"
         ));
-        
-        // Métodos permitidos
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        
-        // Cabeceras permitidas
         configuration.setAllowedHeaders(Arrays.asList(
                 "Origin", 
                 "Content-Type", 
@@ -98,18 +92,13 @@ public class SecurityConfig {
                 "Access-Control-Request-Method", 
                 "Access-Control-Request-Headers"
         ));
-        
-        // Exponer cabeceras al cliente
         configuration.setExposedHeaders(Arrays.asList(
                 "Access-Control-Allow-Origin", 
                 "Access-Control-Allow-Credentials", 
                 "Authorization"
         ));
         
-        // Permitir credenciales
         configuration.setAllowCredentials(true);
-        
-        // Tiempo de cache para preflight (OPTIONS)
         configuration.setMaxAge(3600L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

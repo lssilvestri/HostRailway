@@ -31,7 +31,7 @@ public class AlojamientoDTO {
         this.categoriaId = categoriaId;
         this.imagenesUrl = imagenesUrl;
         this.reservas = reservas;
-        this.esFavorito = false; // Valor por defecto
-        this.fechasOcupadas = new ArrayList<>(); // Inicialización vacía
+        this.esFavorito = false;
+        this.fechasOcupadas = new ArrayList<>();
     }
 }

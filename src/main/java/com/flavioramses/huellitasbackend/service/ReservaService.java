@@ -43,10 +43,8 @@ public class ReservaService {
             return reservas.stream()
                     .map(reserva -> {
                         try {
-                            // Convertimos directamente a DTO para evitar problemas de serialización
                             return ReservaDTO.fromEntity(reserva);
                         } catch (Exception e) {
-                            // Si hay un error al procesar una reserva, la omitimos y registramos el error
                             System.err.println("Error al procesar reserva ID " + 
                                 (reserva != null && reserva.getId() != null ? reserva.getId() : "desconocido") + 
                                 ": " + e.getMessage());

@@ -27,13 +27,6 @@ import java.util.Map;
 public class FavoritosController {
     
     private final AlojamientoFavoritoService favoritoService;
-
-    /**
-     * Obtiene todos los alojamientos favoritos de un cliente.
-     * 
-     * @param clienteId ID del cliente
-     * @return Lista de alojamientos favoritos
-     */
     @GetMapping("/cliente/{clienteId}")
     @Operation(summary = "Obtener favoritos de un cliente", description = "Retorna todos los alojamientos marcados como favoritos por el cliente")
     @ApiResponse(responseCode = "200", description = "Lista de alojamientos favoritos")
@@ -43,13 +36,6 @@ public class FavoritosController {
         return ResponseEntity.ok(favoritoService.obtenerFavoritosPorCliente(clienteId));
     }
 
-    /**
-     * Agrega un alojamiento a los favoritos de un cliente.
-     * 
-     * @param clienteId ID del cliente
-     * @param alojamientoId ID del alojamiento
-     * @return Estado de la operación
-     */
     @PostMapping("/cliente/{clienteId}/alojamiento/{alojamientoId}")
     @Operation(summary = "Agregar favorito", description = "Agrega un alojamiento a los favoritos de un cliente")
     @ApiResponse(responseCode = "200", description = "Alojamiento agregado a favoritos")
@@ -79,13 +65,6 @@ public class FavoritosController {
         }
     }
 
-    /**
-     * Elimina un alojamiento de los favoritos de un cliente.
-     * 
-     * @param clienteId ID del cliente
-     * @param alojamientoId ID del alojamiento
-     * @return Estado de la operación
-     */
     @DeleteMapping("/cliente/{clienteId}/alojamiento/{alojamientoId}")
     @Operation(summary = "Eliminar favorito", description = "Elimina un alojamiento de los favoritos de un cliente")
     @ApiResponse(responseCode = "200", description = "Alojamiento eliminado de favoritos")
@@ -105,13 +84,7 @@ public class FavoritosController {
         ));
     }
 
-    /**
-     * Verifica si un alojamiento es favorito de un cliente.
-     * 
-     * @param clienteId ID del cliente
-     * @param alojamientoId ID del alojamiento
-     * @return true si es favorito, false en caso contrario
-     */
+
     @GetMapping("/cliente/{clienteId}/alojamiento/{alojamientoId}")
     @Operation(summary = "Verificar favorito", description = "Verifica si un alojamiento es favorito de un cliente")
     @ApiResponse(responseCode = "200", description = "Estado del favorito")
@@ -126,13 +99,7 @@ public class FavoritosController {
         ));
     }
 
-    /**
-     * Alterna el estado de favorito de un alojamiento para un cliente.
-     * 
-     * @param clienteId ID del cliente
-     * @param alojamientoId ID del alojamiento
-     * @return Estado actualizado
-     */
+
     @PutMapping("/cliente/{clienteId}/alojamiento/{alojamientoId}/alternar")
     @Operation(summary = "Alternar favorito", description = "Agrega o elimina un alojamiento de favoritos según su estado actual")
     @ApiResponse(responseCode = "200", description = "Estado actualizado")

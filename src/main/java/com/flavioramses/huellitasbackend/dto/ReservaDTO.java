@@ -38,7 +38,6 @@ public class ReservaDTO {
         ReservaDTO dto = new ReservaDTO();
         dto.setId(reserva.getId());
         
-        // Manejar fechas
         dto.setFechaDesde(reserva.getFechaDesde() != null ? 
             reserva.getFechaDesde().format(FORMATTER) : "Fecha no disponible");
         dto.setFechaHasta(reserva.getFechaHasta() != null ? 
@@ -46,10 +45,8 @@ public class ReservaDTO {
         dto.setFechaCreacion(reserva.getFechaCreacion() != null ? 
             reserva.getFechaCreacion().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")) : "Fecha no disponible");
         
-        // Manejar estado
         dto.setEstado(reserva.getEstado());
         
-        // Manejar mascota
         if (reserva.getMascota() != null) {
             dto.setMascotaId(reserva.getMascota().getId());
             dto.setMascotaNombre(reserva.getMascota().getNombre());
@@ -58,7 +55,6 @@ public class ReservaDTO {
             dto.setMascotaNombre("Desconocida");
         }
         
-        // Manejar alojamiento
         if (reserva.getAlojamiento() != null) {
             dto.setAlojamientoId(reserva.getAlojamiento().getId());
             dto.setAlojamientoNombre(reserva.getAlojamiento().getNombre());
@@ -69,7 +65,6 @@ public class ReservaDTO {
             dto.setAlojamientoPrecio(0.0);
         }
         
-        // Manejar cliente
         if (reserva.getCliente() != null && reserva.getCliente().getUsuario() != null) {
             dto.setClienteNombre(reserva.getCliente().getUsuario().getNombre());
             dto.setClienteApellido(reserva.getCliente().getUsuario().getApellido());
