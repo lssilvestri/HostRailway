@@ -77,17 +77,4 @@ public class PerfilController {
         PerfilUsuarioDTO perfil = perfilService.obtenerPerfil(id);
         return ResponseEntity.ok(perfil);
     }
-    
-    // Endpoint adicional para pruebas sin autenticación
-    @PutMapping("/test/{id}")
-    @Operation(summary = "Actualizar perfil (prueba)", description = "Actualiza los datos del perfil sin requerir autenticación (solo para pruebas)")
-    public ResponseEntity<PerfilUsuarioDTO> actualizarPerfilTest(
-            @Parameter(description = "ID del usuario", required = true) @PathVariable Long id,
-            @Parameter(description = "Datos actualizados del perfil", required = true) @RequestBody PerfilUsuarioDTO perfilDTO) 
-            throws ResourceNotFoundException {
-        
-        log.info("Actualizando perfil para prueba con ID: {}", id);
-        PerfilUsuarioDTO perfilActualizado = perfilService.actualizarPerfil(id, perfilDTO);
-        return ResponseEntity.ok(perfilActualizado);
-    }
 } 
